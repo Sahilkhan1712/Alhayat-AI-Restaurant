@@ -1,4 +1,4 @@
-const CACHE_NAME = "alhayat-cache-v1";
+const CACHE_NAME = "alhayat-cache-v2";
 
 const urlsToCache = [
     "/",
