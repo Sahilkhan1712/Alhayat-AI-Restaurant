@@ -316,25 +316,51 @@ ${menuText}
             }
         ];
 
-        const response = await fetch("http://localhost:11434/api/chat", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        model: "gemma3:4b",
-        messages: conversation,
-        stream: false
-    })
-});
+const response = await fetch(
+"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+    {    
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": process.env.GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+            systemInstruction: {
+                parts: [
+                    {
+                        text: systemPrompt
+                    }
+                ]
+            },
+            contents: conversation
+                .filter(msg => msg.role !== "system")
+                .map(msg => ({
+                    role: msg.role === "assistant" ? "model" : "user",
+                    parts: [
+                        {
+                            text: msg.content
+                        }
+                    ]
+                }))
+        })
+    }
+);
 
 const data = await response.json();
 
 if (!response.ok) {
-    throw new Error(data.error || "Ollama AI error");
+    throw new Error(
+        `Gemini API ${response.status}: ${JSON.stringify(data.error)}`
+    );
 }
 
-const reply = data.message?.content || "Sorry, AI could not generate a response.";
+const reply =
+    data.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
+        .join("")
+        .trim() ||
+    "Sorry, AI could not generate a response.";
+
 
    
 
