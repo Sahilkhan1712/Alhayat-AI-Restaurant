@@ -1015,54 +1015,65 @@
          NAVBAR
     ===================================================== -->
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 fixed-top">
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 fixed-top">
 
-        <a class="navbar-brand" href="#">
+    <!-- LOGO -->
+    <a class="navbar-brand" href="#">
+        <img src="logo.png" alt="AlHayat AI Logo" class="logo">
+    </a>
 
-            <img src="logo.png" alt="AlHayat AI Logo" class="logo">
+    <!-- MOBILE MENU BUTTON -->
+    <button
+        class="mobile-menu-btn"
+        type="button"
+        onclick="toggleMobileMenu()"
+        aria-label="Open Menu"
+    >
+        ⋮
+    </button>
 
-        </a>
+    <!-- NAV LINKS -->
+    <ul class="navbar-nav ms-auto align-items-center" id="navbarLinks">
 
+        <!-- HOME -->
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                Home
+            </a>
+        </li>
 
-        <ul class="navbar-nav ms-auto align-items-center" id="navbarLinks">
+        <!-- MENU -->
+        <li class="nav-item">
+            <a class="nav-link" href="#menu">
+                Menu
+            </a>
+        </li>
 
-            <!-- HOME -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Home
-                </a>
-            </li>
+        <!-- MY ORDERS -->
+        <li class="nav-item">
+            <a class="nav-link" href="myorders.html">
+                My Orders
+            </a>
+        </li>
 
-            <!-- MENU -->
-            <li class="nav-item">
-                <a class="nav-link" href="#menu">
-                    Menu
-                </a>
-            </li>
+        <!-- LOGIN / USER -->
+        <li class="nav-item ms-2" id="authNavItem">
+            <a href="login.html" class="btn btn-warning fw-bold px-4">
+                🔐 Login
+            </a>
+        </li>
 
-            <!-- MY ORDERS -->
-            <li class="nav-item">
-                <a class="nav-link" href="myorders.html">
-                    My Orders
-                </a>
-            </li>
+    </ul>
 
-            <!-- LOGIN / USER -->
-            <li class="nav-item ms-2" id="authNavItem">
-                <a href="login.html" class="btn btn-warning fw-bold px-4">
-                    🔐 Login
-                </a>
-            </li>
+    <!-- DARK MODE -->
+    <button
+        class="btn btn-outline-light ms-3 dark-mode-btn"
+        onclick="toggleDarkMode()"
+    >
+        🌙 Dark Mode
+    </button>
 
-        </ul>
-
-        <button class="btn btn-outline-light ms-3" onclick="toggleDarkMode()">
-
-            🌙 Dark Mode
-
-        </button>
-
-    </nav>
+</nav>
 
 
 

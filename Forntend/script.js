@@ -1186,3 +1186,10 @@ function goToCheckout() {
         block: "start"
     });
 }
+function toggleMobileMenu() {
+    const menu = document.getElementById("navbarLinks");
+
+    if (menu) {
+        menu.classList.toggle("mobile-menu-open");
+    }
+}

@@ -1213,3 +1213,24 @@ window.updateReservationStatus =
 loadOrders();
 
 loadReservations();
+function logoutAdmin() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.href = "login.html";
+}
+
+window.logoutAdmin = logoutAdmin;
+// SHOW ADMIN NAME
+const adminUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+const adminNameElement = document.getElementById("adminName");
+
+if (adminNameElement) {
+    adminNameElement.innerText =
+        adminUser.name ||
+        adminUser.username ||
+        adminUser.fullName ||
+        adminUser.email ||
+        "Admin";
+}

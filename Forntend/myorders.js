@@ -1,3 +1,269 @@
+
+/* =====================================================
+   PREMIUM MY ORDERS DESIGN
+===================================================== */
+
+const myOrdersStyle = document.createElement("style");
+
+myOrdersStyle.innerHTML = `
+
+    body {
+        background:
+            radial-gradient(circle at 10% 20%, rgba(255,193,7,0.08), transparent 25%),
+            radial-gradient(circle at 90% 80%, rgba(255,193,7,0.06), transparent 25%),
+            #101316 !important;
+
+        color: white;
+        padding-top: 70px;
+    }
+
+    #myOrders {
+        width: 92%;
+        max-width: 1150px;
+        margin: 30px auto;
+    }
+
+    /* ORDER CARD */
+    #myOrders .card.p-4.mb-4.bg-secondary.text-white {
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(38,42,47,0.98),
+                rgba(18,21,24,0.98)
+            ) !important;
+
+        border: 1px solid rgba(255,193,7,0.35) !important;
+
+        border-radius: 22px !important;
+
+        padding: 28px !important;
+
+        box-shadow:
+            0 15px 35px rgba(0,0,0,0.45),
+            0 0 25px rgba(255,193,7,0.08),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+
+        position: relative;
+        overflow: hidden;
+
+        transition: all 0.3s ease;
+    }
+
+    /* GOLD GLOW LINE */
+    #myOrders .card::before {
+
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 3px;
+
+        background: linear-gradient(
+            90deg,
+            transparent,
+            #ffc107,
+            #ffe082,
+            #ffc107,
+            transparent
+        );
+
+        box-shadow: 0 0 15px rgba(255,193,7,0.7);
+    }
+
+    /* HOVER */
+    #myOrders .card:hover {
+
+        transform: translateY(-5px);
+
+        border-color: rgba(255,193,7,0.7) !important;
+
+        box-shadow:
+            0 20px 45px rgba(0,0,0,0.55),
+            0 0 30px rgba(255,193,7,0.15);
+    }
+
+    /* ORDER ID */
+    #myOrders .card h4:first-child {
+
+        color: #ffc107;
+
+        font-size: 22px;
+
+        font-weight: 700;
+
+        letter-spacing: 0.3px;
+    }
+
+    /* SEPARATOR */
+    #myOrders .card hr {
+
+        border-color: rgba(255,255,255,0.15);
+
+        margin: 20px 0;
+    }
+
+    /* DETAILS */
+    #myOrders .card p {
+
+        background: rgba(255,255,255,0.035);
+
+        border: 1px solid rgba(255,255,255,0.06);
+
+        border-radius: 10px;
+
+        padding: 11px 14px;
+
+        margin: 10px 0;
+
+        font-size: 15px;
+    }
+
+    /* ORDERED ITEMS */
+    #myOrders .card h5 {
+
+        color: #ffc107;
+
+        font-size: 18px;
+
+        margin-top: 25px !important;
+
+        margin-bottom: 10px;
+    }
+
+    #myOrders .card ul {
+
+        background: rgba(0,0,0,0.18);
+
+        border-radius: 12px;
+
+        padding: 14px 14px 14px 35px;
+
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    #myOrders .card li {
+
+        padding: 7px 0;
+
+        color: #f1f1f1;
+
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    #myOrders .card li:last-child {
+        border-bottom: none;
+    }
+
+    /* TOTAL */
+    #myOrders .card h4.text-warning {
+
+        display: inline-block;
+
+        margin-top: 18px;
+
+        padding: 12px 20px;
+
+        border-radius: 14px;
+
+        background: linear-gradient(
+            135deg,
+            rgba(255,193,7,0.18),
+            rgba(255,193,7,0.05)
+        );
+
+        border: 1px solid rgba(255,193,7,0.35);
+
+        box-shadow:
+            0 0 18px rgba(255,193,7,0.08);
+    }
+
+    /* DATE */
+    #myOrders .card small {
+
+        color: #aaa;
+
+        margin-top: 18px !important;
+
+        padding-top: 12px;
+
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+
+    /* ================================
+       MOBILE
+    ================================= */
+
+    @media (max-width: 768px) {
+
+        body {
+            padding-top: 75px;
+        }
+
+        #myOrders {
+
+            width: 94%;
+
+            margin: 20px auto;
+        }
+
+        #myOrders .card.p-4.mb-4.bg-secondary.text-white {
+
+            padding: 18px !important;
+
+            border-radius: 18px !important;
+        }
+
+        #myOrders .card h4:first-child {
+
+            font-size: 17px;
+
+            line-height: 1.5;
+
+            word-break: break-word;
+        }
+
+        #myOrders .card p {
+
+            font-size: 14px;
+
+            padding: 10px;
+
+            line-height: 1.5;
+        }
+
+        #myOrders .card h5 {
+
+            font-size: 16px;
+        }
+
+        #myOrders .card li {
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        #myOrders .card h4.text-warning {
+
+            font-size: 18px;
+
+            width: 100%;
+
+            text-align: center;
+
+            box-sizing: border-box;
+        }
+    }
+
+`;
+
+document.head.appendChild(myOrdersStyle);
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
