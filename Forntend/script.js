@@ -1,6 +1,6 @@
 let discount = 0;
 
-const socket = io("http://localhost:8000");
+const socket = io("https://alhayat-ai-restaurant-backend.onrender.com");
 
 const notificationSound = new Audio("notification.mp3");
 
@@ -405,7 +405,7 @@ async function placeOrder() {
 
     try {
 
-        const response = await fetch("http://localhost:8000/place-order", {
+        const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/place-order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -483,7 +483,7 @@ async function reserveTable() {
 
   const response =
     await fetch(
-      "http://localhost:8000/reserve-table",
+      "https://alhayat-ai-restaurant-backend.onrender.com/reserve-table",
       {
         method: "POST",
 
@@ -566,7 +566,7 @@ async function trackOrder() {
     try {
 
         const response = await fetch(
-            `http://localhost:8000/track-order/${orderId}`,
+            `https://alhayat-ai-restaurant-backend.onrender.com/track-order/${orderId}`,
             {
                 method: "GET",
                 headers: {
@@ -901,7 +901,7 @@ async function askAI() {
 
     try {
 
-        const response = await fetch("http://localhost:8000/ai-chat", {
+        const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/ai-chat", {
 
             method: "POST",
 

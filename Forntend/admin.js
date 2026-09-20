@@ -35,7 +35,7 @@ if (
 // SOCKET.IO
 // ==========================================
 
-const socket = io("http://localhost:8000");
+const socket = io("https://alhayat-ai-restaurant-backend.onrender.com");
 
 console.log("Admin Panel Loaded");
 
@@ -73,7 +73,7 @@ async function loadOrders() {
     try {
 
         const response = await fetch(
-            "http://localhost:8000/orders",
+            "https://alhayat-ai-restaurant-backend.onrender.com/orders",
             {
                 method: "GET",
                 headers: authHeaders()
@@ -759,7 +759,7 @@ async function updateStatus(
 
         const response =
             await fetch(
-                "http://localhost:8000/update-status",
+                "https://alhayat-ai-restaurant-backend.onrender.com/update-status",
                 {
 
                     method: "POST",
@@ -837,7 +837,7 @@ async function deleteOrder(
 
         const response =
             await fetch(
-                "http://localhost:8000/delete-order",
+                "https://alhayat-ai-restaurant-backend.onrender.com/delete-order",
                 {
 
                     method: "POST",
@@ -893,7 +893,7 @@ async function updatePaymentStatus(
 
         const response =
             await fetch(
-                "http://localhost:8000/update-payment",
+                "https://alhayat-ai-restaurant-backend.onrender.com/update-payment",
                 {
 
                     method: "POST",
@@ -974,7 +974,7 @@ async function loadReservations() {
 
         const response =
             await fetch(
-                "http://localhost:8000/reservations",
+                "https://alhayat-ai-restaurant-backend.onrender.com/reservations",
                 {
 
                     method: "GET",
@@ -1148,7 +1148,7 @@ async function updateReservationStatus(
 
         const response =
             await fetch(
-                "http://localhost:8000/update-reservation-status",
+                "https://alhayat-ai-restaurant-backend.onrender.com/update-reservation-status",
                 {
 
                     method: "POST",
