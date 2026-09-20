@@ -1,0 +1,3782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AlHayat AI Restaurant</title>
+
+    <link rel="manifest" href="manifest.json">
+
+    <link href="style.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+        /* =====================================================
+           ALHAYAT PREMIUM 3D CART
+        ===================================================== */
+
+        .premium-cart-section {
+            position: relative;
+            padding: 70px 5%;
+            background:
+                radial-gradient(circle at 15% 20%,
+                    rgba(255, 193, 7, .12),
+                    transparent 30%),
+                radial-gradient(circle at 85% 30%,
+                    rgba(255, 140, 0, .10),
+                    transparent 30%),
+                #050b0f;
+
+            color: white;
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           CART HERO
+        ===================================================== */
+
+        .cart-hero {
+            min-height: 220px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            position: relative;
+
+            padding: 40px 5%;
+
+            border-radius: 30px;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(20, 32, 38, .96),
+                    rgba(5, 10, 13, .95));
+
+            border: 1px solid rgba(255, 193, 7, .25);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, .55),
+                inset 0 1px 1px rgba(255, 255, 255, .08);
+
+            margin-bottom: 35px;
+
+            overflow: hidden;
+        }
+
+
+        .cart-hero::after {
+            content: "";
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            right: -100px;
+            top: -150px;
+
+            background: #ffc107;
+
+            filter: blur(120px);
+
+            opacity: .08;
+        }
+
+
+        .cart-title {
+            font-size: clamp(45px, 6vw, 75px);
+            font-weight: 900;
+            letter-spacing: -3px;
+
+            text-shadow:
+                0 5px 25px rgba(255, 193, 7, .25);
+        }
+
+
+        .cart-title span {
+            color: #ffc107;
+        }
+
+
+        .cart-hero p {
+            color: #aeb8bc;
+            font-size: 19px;
+            margin-top: 10px;
+        }
+
+
+        .cart-quote {
+            color: #d8b65e;
+
+            font-size: 24px;
+
+            font-style: italic;
+
+            text-align: center;
+
+            transform: rotate(-4deg);
+
+            z-index: 2;
+        }
+
+
+        .floating-food {
+            position: absolute;
+
+            right: 70px;
+            bottom: -45px;
+
+            font-size: 120px;
+
+            filter:
+                drop-shadow(0 20px 25px rgba(255, 193, 7, .30));
+
+            animation:
+                floatingPlate 4s ease-in-out infinite;
+
+            z-index: 2;
+        }
+
+
+        @keyframes floatingPlate {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0) rotate(-5deg);
+            }
+
+            50% {
+                transform:
+                    translateY(-15px) rotate(5deg);
+            }
+
+        }
+
+
+        /* =====================================================
+           CART MAIN
+        ===================================================== */
+
+        .cart-main-layout {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 2.3fr) minmax(330px, .9fr);
+
+            gap: 25px;
+
+            align-items: start;
+        }
+
+
+        /* =====================================================
+           CART ITEMS
+        ===================================================== */
+
+        #cartItems {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 20px;
+
+        }
+
+
+        /*
+           Existing script.js cart ke andar div banata hai.
+           Isliye hum uske direct div ko automatically
+           premium card bana rahe hain.
+        */
+
+        #cartItems>div {
+
+            position: relative;
+
+            min-height: 360px;
+
+            padding: 20px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(35, 48, 55, .96),
+                    rgba(8, 14, 17, .98));
+
+            border:
+                1px solid rgba(255, 255, 255, .12);
+
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, .45),
+                inset 0 1px 1px rgba(255, 255, 255, .10);
+
+            overflow: hidden;
+
+            transition:
+                transform .35s ease,
+                box-shadow .35s ease,
+                border .35s ease;
+
+        }
+
+
+        #cartItems>div::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+            height: 170px;
+
+            top: -80px;
+            right: -70px;
+
+            background: #ffc107;
+
+            filter: blur(90px);
+
+            opacity: .08;
+
+        }
+
+
+        #cartItems>div:hover {
+
+            transform:
+                perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-10px);
+
+            border-color:
+                rgba(255, 193, 7, .60);
+
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, .60),
+                0 0 35px rgba(255, 193, 7, .10);
+
+        }
+
+
+        /* Cart text */
+
+        #cartItems h3,
+        #cartItems h4,
+        #cartItems h5 {
+
+            color: white;
+
+            font-weight: 800;
+
+        }
+
+
+        #cartItems p {
+
+            color: #ffc107;
+
+            font-weight: 700;
+
+            font-size: 18px;
+
+        }
+
+
+        #cartItems strong {
+
+            color: #ffc107;
+
+        }
+
+
+        #cartItems img {
+
+            width: 100%;
+
+            height: 170px;
+
+            object-fit: cover;
+
+            border-radius: 18px;
+
+            margin-bottom: 15px;
+
+            box-shadow:
+                0 15px 25px rgba(0, 0, 0, .5);
+
+            transition: .4s;
+
+        }
+
+
+        #cartItems>div:hover img {
+
+            transform:
+                scale(1.05) translateY(-5px);
+
+        }
+
+
+        /* Cart buttons */
+
+        #cartItems button {
+
+            border-radius: 12px;
+
+            border: none;
+
+            min-height: 40px;
+
+            transition: .25s;
+
+        }
+
+
+        #cartItems button:hover {
+
+            transform: scale(1.04);
+
+        }
+
+
+        /* =====================================================
+           ORDER SUMMARY
+        ===================================================== */
+
+        .order-summary-3d {
+
+            position: sticky;
+
+            top: 90px;
+
+            padding: 28px;
+
+            border-radius: 28px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(22, 33, 39, .98),
+                    rgba(6, 12, 15, .98));
+
+            border:
+                1px solid rgba(255, 193, 7, .35);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, .55),
+                inset 0 1px 1px rgba(255, 255, 255, .08);
+
+        }
+
+
+        .order-summary-3d h2 {
+
+            font-size: 25px;
+
+            font-weight: 800;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .summary-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin: 17px 0;
+
+            color: #c4cdd0;
+
+        }
+
+
+        .summary-row strong {
+
+            color: white;
+
+        }
+
+
+        .summary-line {
+
+            height: 1px;
+
+            background:
+                rgba(255, 255, 255, .14);
+
+            margin: 20px 0;
+
+        }
+
+
+        .summary-total {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        .summary-total span {
+
+            font-size: 19px;
+
+        }
+
+
+        .summary-total strong {
+
+            color: #ffc107;
+
+            font-size: 31px;
+
+            text-shadow:
+                0 0 20px rgba(255, 193, 7, .25);
+
+        }
+
+
+        /* =====================================================
+           COUPON
+        ===================================================== */
+
+        .coupon-box {
+
+            margin-top: 25px;
+
+            padding: 17px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255, 255, 255, .045);
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+        }
+
+
+        .coupon-box h5 {
+
+            font-size: 15px;
+
+            color: white;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .coupon-row {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+
+        .coupon-row input {
+
+            flex: 1;
+
+            min-width: 0;
+
+            background: #263139;
+
+            border: none;
+
+            outline: none;
+
+            color: white;
+
+            padding: 11px;
+
+            border-radius: 10px;
+
+        }
+
+
+        .coupon-row button {
+
+            border: 1px solid #ffc107;
+
+            background: transparent;
+
+            color: #ffc107;
+
+            border-radius: 10px;
+
+            padding: 0 15px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           BENEFITS
+        ===================================================== */
+
+        .cart-benefits {
+
+            margin-top: 25px;
+
+        }
+
+
+        .cart-benefits div {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 9px 0;
+
+            color: #c5ced1;
+
+            font-size: 14px;
+
+        }
+
+
+        .cart-benefits span {
+
+            font-size: 21px;
+
+        }
+
+
+        /* =====================================================
+           CHECKOUT BUTTON
+        ===================================================== */
+
+        .premium-checkout-btn {
+
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 17px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(135deg,
+                    #ffd54f,
+                    #ffae00);
+
+            color: #111;
+
+            font-size: 17px;
+
+            font-weight: 900;
+
+            box-shadow:
+                0 12px 30px rgba(255, 193, 7, .28);
+
+            transition: .3s;
+
+        }
+
+
+        .premium-checkout-btn:hover {
+
+            transform:
+                translateY(-4px) scale(1.02);
+
+            box-shadow:
+                0 18px 40px rgba(255, 193, 7, .45);
+
+        }
+
+
+        /* =====================================================
+           RECOMMENDATION
+        ===================================================== */
+
+        .recommendation-box {
+
+            margin-top: 25px;
+
+            padding: 25px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(18, 29, 35, .96),
+                    rgba(7, 13, 16, .96));
+
+            border:
+                1px solid rgba(255, 255, 255, .10);
+
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, .35);
+
+        }
+
+
+        .recommendation-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .recommendation-header h2 {
+
+            font-size: 23px;
+
+            margin: 0;
+
+        }
+
+
+        .recommendation-header p {
+
+            color: #879297;
+
+            margin: 5px 0 0;
+
+        }
+
+
+        .add-all-btn {
+
+            border:
+                1px solid #ffc107;
+
+            background: transparent;
+
+            color: #ffc107;
+
+            border-radius: 25px;
+
+            padding: 10px 17px;
+
+            font-weight: 700;
+
+        }
+
+
+        .recommendation-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+        }
+
+
+        .recommend-card {
+
+            padding: 15px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(145deg,
+                    #202b31,
+                    #0d1417);
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+            transition: .3s;
+
+        }
+
+
+        .recommend-card:hover {
+
+            transform:
+                translateY(-8px);
+
+            border-color:
+                #ffc107;
+
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, .45);
+
+        }
+
+
+        .recommend-icon {
+
+            height: 100px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 65px;
+
+            filter:
+                drop-shadow(0 10px 10px rgba(0, 0, 0, .5));
+
+        }
+
+
+        .recommend-card h5 {
+
+            margin-top: 10px;
+
+            color: white;
+
+        }
+
+
+        .recommend-card strong {
+
+            display: block;
+
+            color: #ffc107;
+
+            font-size: 18px;
+
+            margin: 7px 0;
+
+        }
+
+
+        .recommend-card button {
+
+            width: 100%;
+
+            border:
+                1px solid #ffc107;
+
+            background: transparent;
+
+            color: #ffc107;
+
+            border-radius: 20px;
+
+            padding: 7px;
+
+            font-weight: 700;
+
+            transition: .25s;
+
+        }
+
+
+        .recommend-card button:hover {
+
+            background: #ffc107;
+
+            color: #111;
+
+        }
+
+
+        /* =====================================================
+           FEATURES
+        ===================================================== */
+
+        .cart-features {
+
+            margin-top: 45px;
+
+            padding: 28px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            border-radius: 28px;
+
+            background:
+                rgba(255, 255, 255, .025);
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+
+        }
+
+
+        .cart-feature {
+
+            text-align: center;
+
+            padding: 10px;
+
+            border-right:
+                1px solid rgba(255, 255, 255, .12);
+
+        }
+
+
+        .cart-feature:last-child {
+
+            border-right: none;
+
+        }
+
+
+        .cart-feature-icon {
+
+            font-size: 34px;
+
+        }
+
+
+        .cart-feature h5 {
+
+            margin-top: 8px;
+
+            color: white;
+
+        }
+
+
+        .cart-feature p {
+
+            color: #879297;
+
+            font-size: 13px;
+
+            margin: 0;
+
+        }
+
+
+        /* =====================================================
+           CHECKOUT / TRACK / RESERVATION 3D
+        ===================================================== */
+
+        .premium-normal-card {
+
+            border-radius: 25px !important;
+
+            background:
+                linear-gradient(145deg,
+                    #202b31,
+                    #0d1417) !important;
+
+            border:
+                1px solid rgba(255, 193, 7, .20) !important;
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, .35) !important;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media(max-width:1100px) {
+
+            .cart-main-layout {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .order-summary-3d {
+
+                position: relative;
+
+                top: 0;
+
+            }
+
+        }
+
+
+        @media(max-width:900px) {
+
+            #cartItems {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+            .recommendation-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+            .cart-features {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+        }
+
+
+        @media(max-width:600px) {
+
+            .premium-cart-section {
+
+                padding: 40px 15px;
+
+            }
+
+            .cart-hero {
+
+                padding: 25px;
+
+                min-height: 180px;
+
+            }
+
+            .cart-title {
+
+                font-size: 42px;
+
+            }
+
+            .cart-quote,
+            .floating-food {
+
+                display: none;
+
+            }
+
+            #cartItems {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .recommendation-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+            .cart-features {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .cart-feature {
+
+                border-right: none;
+
+                border-bottom:
+                    1px solid rgba(255, 255, 255, .10);
+
+                padding: 18px;
+
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 fixed-top">
+
+        <a class="navbar-brand" href="#">
+
+            <img src="logo.png" alt="AlHayat AI Logo" class="logo">
+
+        </a>
+
+
+        <ul class="navbar-nav ms-auto align-items-center" id="navbarLinks">
+
+            <!-- HOME -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    Home
+                </a>
+            </li>
+
+            <!-- MENU -->
+            <li class="nav-item">
+                <a class="nav-link" href="#menu">
+                    Menu
+                </a>
+            </li>
+
+            <!-- MY ORDERS -->
+            <li class="nav-item">
+                <a class="nav-link" href="myorders.html">
+                    My Orders
+                </a>
+            </li>
+
+            <!-- LOGIN / USER -->
+            <li class="nav-item ms-2" id="authNavItem">
+                <a href="login.html" class="btn btn-warning fw-bold px-4">
+                    🔐 Login
+                </a>
+            </li>
+
+        </ul>
+
+        <button class="btn btn-outline-light ms-3" onclick="toggleDarkMode()">
+
+            🌙 Dark Mode
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         HERO 1
+    ===================================================== -->
+
+    <section class="hero text-center py-5">
+
+        <div class="overlay">
+
+            <h1>
+                Welcome to AI Smart Restaurant
+            </h1>
+
+            <p>
+                Food Meets Artificial Intelligence
+            </p>
+
+
+            <button class="btn btn-warning btn-lg mt-3" onclick="window.location='#menu'">
+
+                Order Now
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         HERO 2
+    ===================================================== -->
+
+    <section class="hero text-center py-5">
+
+        <div class="overlay">
+
+            <h1>
+                Experience Smart Dining
+            </h1>
+
+            <p>
+                AI-powered recommendations for your taste
+            </p>
+
+
+            <button class="btn btn-warning btn-lg" onclick="window.location='#reservation'">
+
+                Reserve Table
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MENU
+    ===================================================== -->
+    <!-- ============================= -->
+    <!-- 🍽️ ALHAYAT PREMIUM FOOD MENU -->
+    <!-- ============================= -->
+
+    <!-- =========================================================
+     🍽️ ALHAYAT PREMIUM FOOD MENU
+========================================================= -->
+
+    <section id="menu" class="food-menu-section">
+
+        <!-- MENU HEADER -->
+        <div class="menu-heading">
+            <span>🍽️ ALHAYAT RESTAURANT</span>
+
+            <h2>
+                Our <b>Premium Menu</b>
+            </h2>
+
+            <p>
+                Delicious food made with love, served fresh for you ❤️
+            </p>
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="menu-search-box">
+
+            <span>🔍</span>
+
+            <input type="text" id="menuSearch" placeholder="Search your favourite food..." onkeyup="searchMenu()">
+
+        </div>
+
+
+        <!-- =====================================================
+         🍽️ CATEGORIES
+    ====================================================== -->
+
+        <div class="menu-categories">
+
+            <button class="category-btn active" onclick="filterMenu('all', this)">
+                🍽️ All
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('pizza', this)">
+                🍕 Pizza
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('burger', this)">
+                🍔 Burger
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('biryani', this)">
+                🍛 Biryani
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('indian', this)">
+                🥘 Indian
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('chinese', this)">
+                🍜 Chinese
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('starter', this)">
+                🍗 Starters
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('pasta', this)">
+                🍝 Pasta
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('roll', this)">
+                🌯 Rolls
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('snacks', this)">
+                🍟 Snacks
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('dessert', this)">
+                🍰 Desserts
+            </button>
+
+            <button class="category-btn" onclick="filterMenu('drink', this)">
+                🥤 Drinks
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+         🍕 FOOD GRID
+    ====================================================== -->
+
+        <div class="food-grid" id="foodGrid">
+
+
+            <!-- =================================================
+             🍕 PIZZA
+        ================================================== -->
+
+            <div class="food-card" data-category="pizza" data-name="Margherita Pizza">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80"
+                        alt="Margherita Pizza">
+
+                    <span class="food-badge">
+                        🔥 Popular
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Margherita Pizza</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Classic cheesy pizza with tomato,
+                        mozzarella and basil.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹249</strong>
+
+                        <button onclick="addToCart('Margherita Pizza',249)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="pizza" data-name="Farmhouse Pizza">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1566843972142-a7fcb70de55a?auto=format&fit=crop&w=800&q=80"
+                        alt="Farmhouse Pizza">
+
+                    <span class="food-badge">
+                        ⭐ Bestseller
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Farmhouse Pizza</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Loaded with onion, capsicum,
+                        mushroom and cheese.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹329</strong>
+
+                        <button onclick="addToCart('Farmhouse Pizza',329)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="pizza" data-name="Paneer Tikka Pizza">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=800&q=80"
+                        alt="Paneer Tikka Pizza">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Paneer Tikka Pizza</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Spicy paneer tikka with onions,
+                        peppers and cheese.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹359</strong>
+
+                        <button onclick="addToCart('Paneer Tikka Pizza',359)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="pizza" data-name="BBQ Chicken Pizza">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=800&q=80"
+                        alt="BBQ Chicken Pizza">
+
+                    <span class="food-badge">
+                        🔥 Hot
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>BBQ Chicken Pizza</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Smoky BBQ chicken with mozzarella
+                        and herbs.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹399</strong>
+
+                        <button onclick="addToCart('BBQ Chicken Pizza',399)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍔 BURGERS
+        ================================================== -->
+
+            <div class="food-card" data-category="burger" data-name="Classic Veg Burger">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
+                        alt="Classic Veg Burger">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Classic Veg Burger</h3>
+                        <span>⭐ 4.6</span>
+                    </div>
+
+                    <p>
+                        Crispy veg patty with lettuce,
+                        tomato and special sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹149</strong>
+
+                        <button onclick="addToCart('Classic Veg Burger',149)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="burger" data-name="Paneer Supreme Burger">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=800&q=80"
+                        alt="Paneer Supreme Burger">
+
+                    <span class="food-badge">
+                        ⭐ Special
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Paneer Supreme Burger</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Juicy paneer patty, cheese and
+                        creamy spicy sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹199</strong>
+
+                        <button onclick="addToCart('Paneer Supreme Burger',199)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="burger" data-name="Crispy Chicken Burger">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=800&q=80"
+                        alt="Crispy Chicken Burger">
+
+                    <span class="food-badge">
+                        🔥 Popular
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Crispy Chicken Burger</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Crispy chicken fillet with cheese
+                        and creamy sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹229</strong>
+
+                        <button onclick="addToCart('Crispy Chicken Burger',229)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="burger" data-name="Double Cheese Burger">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=800&q=80"
+                        alt="Double Cheese Burger">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Double Cheese Burger</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Double patty, double cheese and
+                        signature sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹279</strong>
+
+                        <button onclick="addToCart('Double Cheese Burger',279)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍛 BIRYANI
+        ================================================== -->
+
+            <div class="food-card" data-category="biryani" data-name="Mutton Biryani">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=800&q=80"
+                        alt="Mutton Biryani">
+
+                    <span class="food-badge">
+                        👑 Premium
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Mutton Biryani</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Royal mutton biryani cooked with
+                        premium aromatic spices.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹399</strong>
+
+                        <button onclick="addToCart('Mutton Biryani',399)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="biryani" data-name="Veg Biryani">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1599043513900-ed6fe01d3833?auto=format&fit=crop&w=800&q=80"
+                        alt="Veg Biryani">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Veg Biryani</h3>
+                        <span>⭐ 4.6</span>
+                    </div>
+
+                    <p>
+                        Fresh vegetables cooked with
+                        aromatic basmati rice.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹229</strong>
+
+                        <button onclick="addToCart('Veg Biryani',229)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="biryani" data-name="Egg Biryani">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1633945274309-2c16c9682a8c?auto=format&fit=crop&w=800&q=80"
+                        alt="Egg Biryani">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Egg Biryani</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Spiced basmati rice served with
+                        perfectly cooked eggs.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹249</strong>
+
+                        <button onclick="addToCart('Egg Biryani',249)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🥘 INDIAN
+        ================================================== -->
+
+            <div class="food-card" data-category="indian" data-name="Butter Chicken">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
+                        alt="Butter Chicken">
+
+                    <span class="food-badge">
+                        🔥 Popular
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Butter Chicken</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Tender chicken in rich creamy
+                        tomato butter gravy.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹349</strong>
+
+                        <button onclick="addToCart('Butter Chicken',349)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="indian" data-name="Kadhai Paneer">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80"
+                        alt="Kadhai Paneer">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Kadhai Paneer</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Soft paneer cooked with capsicum
+                        and spicy kadhai masala.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹279</strong>
+
+                        <button onclick="addToCart('Kadhai Paneer',279)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="indian" data-name="Dal Makhani">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+                        alt="Dal Makhani">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Dal Makhani</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Slow-cooked black lentils with
+                        butter and cream.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹229</strong>
+
+                        <button onclick="addToCart('Dal Makhani',229)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍜 CHINESE
+        ================================================== -->
+
+            <div class="food-card" data-category="chinese" data-name="Hakka Noodles">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80"
+                        alt="Hakka Noodles">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Hakka Noodles</h3>
+                        <span>⭐ 4.6</span>
+                    </div>
+
+                    <p>
+                        Classic wok-tossed noodles with
+                        fresh vegetables.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹189</strong>
+
+                        <button onclick="addToCart('Hakka Noodles',189)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="chinese" data-name="Schezwan Noodles">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=800&q=80"
+                        alt="Schezwan Noodles">
+
+                    <span class="food-badge">
+                        🌶️ Spicy
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Schezwan Noodles</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Spicy noodles tossed in authentic
+                        Schezwan sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹209</strong>
+
+                        <button onclick="addToCart('Schezwan Noodles',209)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="chinese" data-name="Chilli Paneer">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?auto=format&fit=crop&w=800&q=80"
+                        alt="Chilli Paneer">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Chilli Paneer</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Crispy paneer tossed with peppers
+                        in spicy chilli sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹239</strong>
+
+                        <button onclick="addToCart('Chilli Paneer',239)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="chinese" data-name="Veg Fried Rice">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80"
+                        alt="Veg Fried Rice">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Veg Fried Rice</h3>
+                        <span>⭐ 4.5</span>
+                    </div>
+
+                    <p>
+                        Wok-fried rice with vegetables
+                        and Asian seasoning.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹179</strong>
+
+                        <button onclick="addToCart('Veg Fried Rice',179)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍗 STARTERS
+        ================================================== -->
+
+            <div class="food-card" data-category="starter" data-name="Paneer Tikka">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=800&q=80"
+                        alt="Paneer Tikka">
+
+                    <span class="food-badge">
+                        ⭐ Bestseller
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Paneer Tikka</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Char-grilled paneer with peppers
+                        and Indian spices.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹259</strong>
+
+                        <button onclick="addToCart('Paneer Tikka',259)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="starter" data-name="Chicken Tikka">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=800&q=80"
+                        alt="Chicken Tikka">
+
+                    <span class="food-badge">
+                        🔥 Hot
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Chicken Tikka</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Juicy grilled chicken marinated
+                        with aromatic spices.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹329</strong>
+
+                        <button onclick="addToCart('Chicken Tikka',329)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍝 PASTA
+        ================================================== -->
+
+            <div class="food-card" data-category="pasta" data-name="Creamy Alfredo Pasta">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=800&q=80"
+                        alt="Creamy Alfredo Pasta">
+
+                    <span class="food-badge">
+                        ❤️ Chef Choice
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Creamy Alfredo Pasta</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Creamy white sauce pasta with
+                        herbs and parmesan.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹249</strong>
+
+                        <button onclick="addToCart('Creamy Alfredo Pasta',249)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="pasta" data-name="Arrabbiata Pasta">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80"
+                        alt="Arrabbiata Pasta">
+
+                    <span class="food-badge">
+                        🌶️ Spicy
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Arrabbiata Pasta</h3>
+                        <span>⭐ 4.6</span>
+                    </div>
+
+                    <p>
+                        Classic pasta tossed in spicy
+                        tomato garlic sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹229</strong>
+
+                        <button onclick="addToCart('Arrabbiata Pasta',229)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="pasta" data-name="Chicken Pasta">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80"
+                        alt="Chicken Pasta">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Chicken Pasta</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Creamy pasta with grilled chicken
+                        and Italian herbs.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹299</strong>
+
+                        <button onclick="addToCart('Chicken Pasta',299)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🌯 ROLLS
+        ================================================== -->
+
+            <div class="food-card" data-category="roll" data-name="Paneer Kathi Roll">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80"
+                        alt="Paneer Kathi Roll">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Paneer Kathi Roll</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Spicy paneer wrapped with onions
+                        and creamy sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹179</strong>
+
+                        <button onclick="addToCart('Paneer Kathi Roll',179)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="roll" data-name="Chicken Shawarma">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80"
+                        alt="Chicken Shawarma">
+
+                    <span class="food-badge">
+                        🔥 Popular
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Chicken Shawarma</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Tender chicken wrapped with fresh
+                        vegetables and sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹199</strong>
+
+                        <button onclick="addToCart('Chicken Shawarma',199)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍟 SNACKS
+        ================================================== -->
+
+            <div class="food-card" data-category="snacks" data-name="Classic French Fries">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80"
+                        alt="Classic French Fries">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Classic French Fries</h3>
+                        <span>⭐ 4.6</span>
+                    </div>
+
+                    <p>
+                        Crispy golden fries served with
+                        signature dip.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹119</strong>
+
+                        <button onclick="addToCart('Classic French Fries',119)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="snacks" data-name="Peri Peri Fries">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=800&q=80"
+                        alt="Peri Peri Fries">
+
+                    <span class="food-badge">
+                        🌶️ Spicy
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Peri Peri Fries</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Crispy fries tossed with hot
+                        peri peri seasoning.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹149</strong>
+
+                        <button onclick="addToCart('Peri Peri Fries',149)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🍰 DESSERTS
+        ================================================== -->
+
+            <div class="food-card" data-category="dessert" data-name="Chocolate Brownie">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=800&q=80"
+                        alt="Chocolate Brownie">
+
+                    <span class="food-badge">
+                        🍫 Sweet
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Chocolate Brownie</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Warm chocolate brownie served
+                        with chocolate sauce.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹159</strong>
+
+                        <button onclick="addToCart('Chocolate Brownie',159)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="dessert" data-name="Gulab Jamun">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
+                        alt="Gulab Jamun">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Gulab Jamun</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Soft traditional gulab jamun
+                        served warm.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹99</strong>
+
+                        <button onclick="addToCart('Gulab Jamun',99)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="dessert" data-name="New York Cheesecake">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=80"
+                        alt="New York Cheesecake">
+
+                    <span class="food-badge">
+                        👑 Premium
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>New York Cheesecake</h3>
+                        <span>⭐ 4.9</span>
+                    </div>
+
+                    <p>
+                        Rich creamy cheesecake with
+                        buttery biscuit base.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹229</strong>
+
+                        <button onclick="addToCart('New York Cheesecake',229)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             🥤 DRINKS
+        ================================================== -->
+
+            <div class="food-card" data-category="drink" data-name="Cold Coffee">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80"
+                        alt="Cold Coffee">
+
+                    <span class="food-badge">
+                        🥤 Popular
+                    </span>
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Cold Coffee</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Chilled creamy coffee topped
+                        with chocolate.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹149</strong>
+
+                        <button onclick="addToCart('Cold Coffee',149)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="drink" data-name="Fresh Lime Mojito">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80"
+                        alt="Fresh Lime Mojito">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Fresh Lime Mojito</h3>
+                        <span>⭐ 4.7</span>
+                    </div>
+
+                    <p>
+                        Refreshing lime, mint and
+                        sparkling chilled drink.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹129</strong>
+
+                        <button onclick="addToCart('Fresh Lime Mojito',129)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="food-card" data-category="drink" data-name="Mango Lassi">
+
+                <div class="food-image">
+
+                    <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&w=800&q=80"
+                        alt="Mango Lassi">
+
+                </div>
+
+                <div class="food-info">
+
+                    <div class="food-title">
+                        <h3>Mango Lassi</h3>
+                        <span>⭐ 4.8</span>
+                    </div>
+
+                    <p>
+                        Thick creamy mango lassi made
+                        with fresh yogurt.
+                    </p>
+
+                    <div class="food-bottom">
+
+                        <strong>₹139</strong>
+
+                        <button onclick="addToCart('Mango Lassi',139)">
+                            + Add
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- NO FOOD FOUND -->
+
+        <div id="noFoodFound" class="no-food">
+
+            😔 No food found.
+            Try another search.
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         🛒 PREMIUM CART
+    ===================================================== -->
+
+    <section class="premium-cart-section">
+
+
+        <!-- CART HERO -->
+
+        <div class="cart-hero">
+
+            <div>
+
+                <div class="cart-title">
+
+                    🛒 Your
+                    <span>Cart</span>
+
+                </div>
+
+
+                <p>
+                    Great food brings people together 💛
+                </p>
+
+            </div>
+
+
+            <div class="cart-quote">
+
+                “Good Food
+                <br>
+                Good Mood”
+
+            </div>
+
+
+            <div class="floating-food">
+
+                🍽️
+
+            </div>
+
+        </div>
+
+
+
+        <!-- MAIN CART -->
+
+        <div class="cart-main-layout">
+
+
+            <!-- LEFT -->
+
+            <div>
+
+
+                <!-- Existing JS uses this ID -->
+
+                <div id="cartItems"></div>
+
+
+
+                <!-- RECOMMENDATION -->
+
+                <div class="recommendation-box">
+
+                    <div class="recommendation-header">
+
+                        <div>
+
+                            <h2>
+                                ✨ Recommended for You
+                            </h2>
+
+                            <p>
+                                Customers also like these items
+                            </p>
+
+                        </div>
+
+
+                        <button class="add-all-btn"
+    onclick="addToCart('Paneer Tikka',299);
+             addToCart('Biryani',349);
+             addToCart('Noodles',199);
+             addToCart('Special Salad',249);">
+
+    🛒 Add All
+
+</button>
+
+                    </div>
+
+
+
+                    <div class="recommendation-grid">
+
+
+                        <div class="recommend-card">
+
+                            <div class="recommend-icon">
+                                🍢
+                            </div>
+
+                            <h5>
+                                Paneer Tikka
+                            </h5>
+
+                            <strong>
+                                ₹299
+                            </strong>
+
+                            <button onclick="addToCart('Paneer Tikka',299)">
+    🛒 Add
+</button>
+
+                        </div>
+
+
+
+                        <div class="recommend-card">
+
+                            <div class="recommend-icon">
+                                🍛
+                            </div>
+
+                            <h5>
+                                Biryani
+                            </h5>
+
+                            <strong>
+                                ₹349
+                            </strong>
+
+                            <button onclick="addToCart('Biryani',349)">
+    🛒 Add
+</button>
+
+                        </div>
+
+
+
+                        <div class="recommend-card">
+
+                            <div class="recommend-icon">
+                                🍜
+                            </div>
+
+                            <h5>
+                                Noodles
+                            </h5>
+
+                            <strong>
+                                ₹199
+                            </strong>
+
+                           <button onclick="addToCart('Noodles',199)">
+    🛒 Add
+</button>
+
+                        </div>
+
+
+
+                        <div class="recommend-card">
+
+                            <div class="recommend-icon">
+                                🥗
+                            </div>
+
+                            <h5>
+                                Special Salad
+                            </h5>
+
+                            <strong>
+                                ₹249
+                            </strong>
+
+                            <button onclick="addToCart('Special Salad',249)">
+    🛒 Add
+</button>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- RIGHT SUMMARY -->
+
+            <div class="order-summary-3d">
+
+
+                <h2>
+                    📋 Order Summary
+                </h2>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Items
+                    </span>
+
+                    <strong>
+                        Your Cart
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Delivery Charges
+                    </span>
+
+                    <strong>
+                        ₹40
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Coupon Discount
+                    </span>
+
+                    <strong id="summaryDiscount" style="color:#35d878;">
+                        - ₹0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-line"></div>
+
+
+                <div class="summary-total">
+
+                    <span>
+                        Total Amount
+                    </span>
+
+                    <strong>
+                        ₹<span id="totalPrice">0</span>
+                    </strong>
+
+                </div>
+
+
+
+                <!-- Coupon -->
+
+                <div class="coupon-box">
+
+                    <h5>
+                        🎟️ Apply Coupon
+                    </h5>
+
+
+                    <div class="coupon-row">
+
+                        <input type="text" id="couponCode" placeholder="Enter coupon code">
+
+
+                        <button onclick="applyCoupon()">
+
+                            Apply
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Benefits -->
+
+                <div class="cart-benefits">
+
+                    <div>
+
+                        <span>
+                            🚚
+                        </span>
+
+                        Free delivery on orders above ₹499
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            🌿
+                        </span>
+
+                        Freshly prepared with love
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            🛡️
+                        </span>
+
+                        100% Secure Payment
+
+                    </div>
+
+
+                    <div>
+                        <span>
+                            ❤️
+                        </span>
+
+                        Thank you for supporting local
+
+                    </div>
+
+                </div>
+
+
+
+                <button type="button" class="premium-checkout-btn" onclick="goToCheckout(); return false;">
+                    Proceed to Checkout
+
+                    <span style="float:right;">
+                        ➜
+                    </span>
+                </button>
+            </div>
+
+
+        </div>
+
+
+
+        <!-- FEATURES -->
+
+        <div class="cart-features">
+
+
+            <div class="cart-feature">
+
+                <div class="cart-feature-icon">
+                    🎧
+                </div>
+
+                <h5>
+                    24/7 Support
+                </h5>
+
+                <p>
+                    We're always here for you
+                </p>
+
+            </div>
+
+
+
+            <div class="cart-feature">
+
+                <div class="cart-feature-icon">
+                    🌿
+                </div>
+
+                <h5>
+                    Fresh Ingredients
+                </h5>
+
+                <p>
+                    Quality you can taste
+                </p>
+
+            </div>
+
+
+
+            <div class="cart-feature">
+
+                <div class="cart-feature-icon">
+                    🛵
+                </div>
+
+                <h5>
+                    Fast Delivery
+                </h5>
+
+                <p>
+                    On time, every time
+                </p>
+
+            </div>
+
+
+
+            <div class="cart-feature">
+
+                <div class="cart-feature-icon">
+                    ❤️
+                </div>
+
+                <h5>
+                    Made with Love
+                </h5>
+
+                <p>
+                    For our valued customers
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CHECKOUT
+    ===================================================== -->
+    <!-- =====================================================
+     PREMIUM CHECKOUT
+===================================================== -->
+    <section id="premiumCheckout" class="checkout-section">
+
+        <div class="checkout-wrapper">
+
+            <!-- HEADER -->
+            <div class="checkout-heading">
+                <span class="checkout-mini-badge">🔐 SECURE CHECKOUT</span>
+
+                <h2>
+                    Complete Your
+                    <span>Order</span>
+                </h2>
+
+                <p>
+                    Fast, secure and flexible payment options
+                </p>
+            </div>
+
+
+            <div class="checkout-grid">
+
+                <!-- LEFT SIDE -->
+                <div class="checkout-form-card">
+
+                    <!-- DELIVERY -->
+                    <div class="checkout-block">
+
+                        <div class="block-title">
+                            <div class="block-icon">📍</div>
+
+                            <div>
+                                <h4>Delivery Address</h4>
+                                <p>Where should we deliver your food?</p>
+                            </div>
+                        </div>
+
+                        <textarea id="orderAddress" class="checkout-input" rows="4"
+                            placeholder="Enter your complete delivery address..."></textarea>
+
+                    </div>
+
+
+                    <!-- PAYMENT -->
+                    <div class="checkout-block">
+
+                        <div class="block-title">
+
+                            <div class="block-icon">💳</div>
+
+                            <div>
+                                <h4>Payment Method</h4>
+                                <p>Select your preferred payment method</p>
+                            </div>
+
+                        </div>
+
+
+                        <!-- MAIN PAYMENT BUTTON -->
+                        <button type="button" class="payment-selector" onclick="togglePaymentOptions()">
+
+                            <div class="payment-selector-left">
+
+                                <div id="selectedPaymentIcon" class="selected-payment-icon">
+                                    💳
+                                </div>
+
+                                <div>
+
+                                    <strong id="selectedPaymentName">
+                                        Choose Payment Method
+                                    </strong>
+
+                                    <small id="selectedPaymentText">
+                                        Click to view all payment options
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <span id="paymentArrow">⌄</span>
+
+                        </button>
+
+
+                        <!-- PAYMENT OPTIONS -->
+                        <div id="paymentOptions" class="payment-options">
+
+                            <!-- UPI -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('UPI','📱','UPI • Google Pay • PhonePe • Paytm')">
+
+                                <div class="option-icon upi-icon">
+                                    📱
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>UPI</strong>
+                                    <span>Google Pay • PhonePe • Paytm • BHIM</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- CARD -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('Credit / Debit Card','💳','Visa • Mastercard • RuPay')">
+
+                                <div class="option-icon card-icon">
+                                    💳
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>Credit / Debit Card</strong>
+                                    <span>Visa • Mastercard • RuPay • Amex</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- NET BANKING -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('Net Banking','🏦','SBI • HDFC • ICICI • Axis & more')">
+
+                                <div class="option-icon bank-icon">
+                                    🏦
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>Net Banking</strong>
+                                    <span>SBI • HDFC • ICICI • Axis & more</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- WALLET -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('Wallets','👛','Paytm • Mobikwik • Amazon Pay')">
+
+                                <div class="option-icon wallet-icon">
+                                    👛
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>Wallets</strong>
+                                    <span>Paytm • Mobikwik • Amazon Pay</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- QR -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('UPI QR','🔳','Scan QR code using any UPI app')">
+
+                                <div class="option-icon qr-icon">
+                                    🔳
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>UPI QR</strong>
+                                    <span>Scan & Pay using any UPI App</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- EMI -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('EMI / Pay Later','💰','Credit Card EMI • Pay Later')">
+
+                                <div class="option-icon emi-icon">
+                                    💰
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>EMI / Pay Later</strong>
+                                    <span>Credit Card EMI • Pay Later</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+
+                            <!-- COD -->
+                            <button type="button" class="payment-option"
+                                onclick="selectPayment('Cash on Delivery','💵','Pay when your food arrives')">
+
+                                <div class="option-icon cod-icon">
+                                    💵
+                                </div>
+
+                                <div class="option-content">
+                                    <strong>Cash on Delivery</strong>
+                                    <span>Pay when your order arrives</span>
+                                </div>
+
+                                <span class="option-arrow">›</span>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- SELECTED PAYMENT DETAILS -->
+                        <div id="paymentDetails" class="payment-details">
+                        </div>
+
+                    </div>
+
+
+                    <!-- COUPON -->
+                    <div class="checkout-block">
+
+                        <div class="block-title">
+
+                            <div class="block-icon">
+                                🎟️
+                            </div>
+
+                            <div>
+                                <h4>Apply Coupon</h4>
+                                <p>Save more on your delicious order</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="coupon-row">
+
+                            <input type="text" id="checkoutCouponCode" class="checkout-input coupon-input"
+                                placeholder="Enter coupon code">
+
+                            <button type="button" onclick="applyCheckoutCoupon()" class="coupon-btn">
+                                Apply
+                            </button>
+
+                        </div>
+
+                        <div class="coupon-hints">
+                            <span>🔥 Use <b>WELCOME50</b></span>
+                            <span>🎁 Use <b>ALHAYAT100</b></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT SIDE -->
+                <div class="order-summary-card">
+
+                    <div class="summary-top">
+
+                        <span class="summary-badge">
+                            🍽️ ALHAYAT
+                        </span>
+
+                        <h3>Order Summary</h3>
+
+                        <p>
+                            Fresh food • Fast delivery
+                        </p>
+
+                    </div>
+
+
+                    <div class="summary-line">
+                        <span>Items Total</span>
+                        <strong>
+                            ₹<span id="checkoutItemsTotal">0</span>
+                        </strong>
+                    </div>
+
+
+                    <div class="summary-line">
+                        <span>Delivery Charges</span>
+                        <strong>₹40</strong>
+                    </div>
+
+
+                    <div class="summary-line discount-line">
+                        <span>Coupon Discount</span>
+                        <strong>
+                            - ₹<span id="checkoutDiscount">0</span>
+                        </strong>
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-total">
+
+                        <span>Total Amount</span>
+
+                        <strong>
+                            ₹<span id="checkoutFinalTotal">40</span>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="secure-payment">
+
+                        <span>🔒</span>
+
+                        <div>
+                            <strong>Secure Payment</strong>
+                            <small>Your payment information is protected</small>
+                        </div>
+
+                    </div>
+
+
+                    <button type="button" onclick="placeOrder()" class="place-order-btn">
+
+                        <span>🍽️</span>
+
+                        <span>
+                            PLACE ORDER
+                        </span>
+
+                        <span>→</span>
+
+                    </button>
+
+
+                    <div class="checkout-trust">
+
+                        <span>✓ Secure</span>
+                        <span>✓ Fast</span>
+                        <span>✓ Reliable</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+    <!-- =========================
+     TRACK YOUR ORDER
+========================= -->
+
+    <section id="track-order" class="container my-5">
+
+        <div class="track-3d-card">
+
+            <!-- Header -->
+            <div class="track-header">
+
+                <div class="track-icon">
+                    🚚
+                </div>
+
+                <div>
+                    <h2>
+                        Track Your <span>Order</span>
+                    </h2>
+
+                    <p>
+                        Enter your Order ID and check your order status in real-time ✨
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- Track Form -->
+            <div class="track-content">
+
+                <div class="track-field">
+
+                    <label>🔎 Order ID</label>
+
+                    <input id="trackOrderId" type="text" placeholder="Enter your Order ID" autocomplete="off">
+
+                </div>
+
+
+                <button type="button" onclick="trackOrder()" class="track-3d-btn">
+
+                    <span>🚚</span>
+
+                    Track My Order
+
+                    <span>→</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- Order Timeline -->
+            <div id="orderTimeline" class="order-timeline"></div>
+
+
+            <!-- Status -->
+            <div id="orderStatus" class="order-status"></div>
+
+
+            <!-- Bottom Info -->
+            <div class="track-footer">
+
+                <div>
+                    📦
+                    <span>Live Order Tracking</span>
+                </div>
+
+                <div>
+                    ⚡
+                    <span>Real-Time Updates</span>
+                </div>
+
+                <div>
+                    🔒
+                    <span>Secure Tracking</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+     TRACK ORDER CSS
+========================= -->
+    <!-- 
+
+         
+
+    <section class="container my-5">
+
+
+        <h2 class="text-warning text-center mb-4">
+
+            Track Your Order
+
+        </h2>
+
+
+        <div class="card p-4 bg-dark text-white premium-normal-card">
+
+
+            <input
+                id="trackOrderId"
+                type="text"
+                class="form-control mb-3"
+                placeholder="Enter Order ID"
+            >
+
+
+            <button
+                type="button"
+                onclick="trackOrder()"
+                class="btn btn-warning w-100"
+            >
+
+                Check Status
+
+            </button>
+
+
+            <div
+                id="orderTimeline"
+                class="mt-3"
+            ></div>
+
+
+            <h4
+                id="orderStatus"
+                class="mt-4 text-center"
+            ></h4>
+
+
+        </div>
+
+    </section>
+
+
+
+    =========================
+     RESERVE YOUR TABLE
+========================= -->
+
+    <section id="reservation" class="container my-5">
+
+        <div class="reservation-3d-card">
+
+            <!-- Header -->
+            <div class="reservation-header">
+
+                <div class="reservation-icon">
+                    🍽️
+                </div>
+
+                <div>
+                    <h2>
+                        Reserve Your <span>Table</span>
+                    </h2>
+
+                    <p>
+                        Book your table and enjoy a premium dining experience ✨
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- Booking Form -->
+            <div class="reservation-content">
+
+                <!-- Name -->
+                <div class="booking-field">
+                    <label>👤 Your Name</label>
+
+                    <input id="customerName" type="text" placeholder="Enter your name">
+                </div>
+
+
+                <!-- Phone -->
+                <div class="booking-field">
+                    <label>📞 Phone Number</label>
+
+                    <input id="customerPhone" type="text" placeholder="Enter phone number">
+                </div>
+
+
+                <!-- Guests -->
+                <div class="booking-field">
+                    <label>👥 Number of Guests</label>
+
+                    <input id="guestCount" type="number" min="1" placeholder="How many guests?">
+                </div>
+
+
+                <!-- Date -->
+                <div class="booking-field">
+                    <label>📅 Booking Date</label>
+
+                    <input id="bookingDate" type="date">
+                </div>
+
+
+                <!-- Time -->
+                <div class="booking-field">
+                    <label>⏰ Select Time</label>
+
+                    <select id="bookingTime">
+
+                        <option value="">
+                            Select Time Slot
+                        </option>
+
+                        <option value="12:00 PM">
+                            🕛 12:00 PM
+                        </option>
+
+                        <option value="01:00 PM">
+                            🕐 01:00 PM
+                        </option>
+
+                        <option value="02:00 PM">
+                            🕑 02:00 PM
+                        </option>
+
+                        <option value="07:00 PM">
+                            🕖 07:00 PM
+                        </option>
+
+                        <option value="08:00 PM">
+                            🕗 08:00 PM
+                        </option>
+
+                        <option value="09:00 PM">
+                            🕘 09:00 PM
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Booking Button -->
+                <button onclick="reserveTable()" class="reserve-3d-btn">
+
+                    <span>🍽️</span>
+
+                    Reserve My Table
+
+                    <span>→</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- Bottom Info -->
+            <div class="reservation-footer">
+
+                <div>
+                    🔒
+                    <span>Secure Booking</span>
+                </div>
+
+                <div>
+                    ⚡
+                    <span>Instant Confirmation</span>
+                </div>
+
+                <div>
+                    ✨
+                    <span>Premium Dining</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+     RESERVATION CSS
+========================= -->
+    <!-- 
+         RESERVATION
+    ===================================================== -->
+
+
+
+
+    <!-- =====================================================
+         AI FOOD ASSISTANT
+    ===================================================== -->
+
+    <!-- =========================
+     AI FOOD ASSISTANT 3D
+========================= -->
+    <section class="ai-assistant-section">
+
+        <div class="ai-3d-card">
+
+            <!-- Floating AI Icon -->
+            <div class="ai-floating-icon">
+                🤖
+            </div>
+
+            <!-- Header -->
+            <div class="ai-header">
+                <div>
+                    <span class="ai-badge">✨ AI POWERED</span>
+
+                    <h2>
+                        AI Food
+                        <span>Assistant</span>
+                    </h2>
+
+                    <p>
+                        Your smart dining companion
+                    </p>
+                </div>
+
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    Online
+                </div>
+            </div>
+
+            <!-- AI Welcome -->
+            <div class="ai-welcome-box">
+
+                <div class="ai-avatar">
+                    🤖
+                </div>
+
+                <div class="ai-message">
+                    <strong>AlHayat AI</strong>
+
+                    <p>
+                        👋 Hello! I'm your AI Food Assistant.
+                        Tell me what you're craving and I'll
+                        recommend something delicious!
+                    </p>
+
+                    <div class="ai-suggestions">
+
+                        <button onclick="aiQuickAsk('Suggest something spicy')">
+                            🌶️ Spicy Food
+                        </button>
+
+                        <button onclick="aiQuickAsk('Suggest healthy food')">
+                            🥗 Healthy
+                        </button>
+
+                        <button onclick="aiQuickAsk('Suggest a drink')">
+                            🥤 Drinks
+                        </button>
+
+                        <button onclick="aiQuickAsk('Suggest something popular')">
+                            ⭐ Popular
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- AI Input -->
+            <div class="ai-input-area">
+
+                <input id="chatInput" type="text" placeholder="Ask AI about food..."
+                    onkeypress="if(event.key === 'Enter') askAI()">
+
+                <button class="ai-send-btn" onclick="askAI()">
+                    <span>➤</span>
+                </button>
+
+            </div>
+
+            <!-- AI Response -->
+            <div id="chatResponse" class="ai-response">
+
+                <div class="response-placeholder">
+                    <span>💡</span>
+                    <p>AI recommendations will appear here...</p>
+                </div>
+
+            </div>
+
+            <!-- AI Features -->
+            <div class="ai-features">
+
+                <div class="ai-feature">
+                    <span>🧠</span>
+                    <small>Smart<br>Recommendations</small>
+                </div>
+
+                <div class="ai-feature">
+                    <span>🍽️</span>
+                    <small>Personalized<br>Food</small>
+                </div>
+
+                <div class="ai-feature">
+                    <span>⚡</span>
+                    <small>Instant<br>Response</small>
+                </div>
+
+                <div class="ai-feature">
+                    <span>❤️</span>
+                    <small>Made For<br>You</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (typeof updateUserNavbar === "function") {
+                updateUserNavbar();
+            }
+        });
+    </script>
+
+
+
+    <!-- =====================================================
+         SCRIPTS
+    ===================================================== -->
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>
