@@ -14,7 +14,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 
-const Order = require("./models/Order");
+const Order = require("./models/order");
 const Reservation = require("./models/Reservation");
 
 const app = express();
