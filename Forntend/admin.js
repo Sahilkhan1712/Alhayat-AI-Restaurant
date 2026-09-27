@@ -118,7 +118,7 @@ async function loadOrders() {
 
             if (sound) {
 
-                sound.play().catch(() => {});
+                sound.play().catch(() => { });
 
             }
 
@@ -510,13 +510,12 @@ async function loadOrders() {
 
                     <p>
                         <b>🕒 Time :</b>
-                        ${
-                            order.createdAt
-                                ? new Date(
-                                    order.createdAt
-                                ).toLocaleString()
-                                : "Old Order"
-                        }
+                        ${order.createdAt
+                    ? new Date(
+                        order.createdAt
+                    ).toLocaleString()
+                    : "Old Order"
+                }
                     </p>
 
 
@@ -561,10 +560,9 @@ async function loadOrders() {
 
                     <!-- ACCEPT -->
 
-                    ${
-                        status === "Pending"
+                    ${status === "Pending"
 
-                            ? `
+                    ? `
 
                                 <button
 
@@ -585,16 +583,15 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
 
                     <!-- PREPARING -->
 
-                    ${
-                        status === "Accepted"
+                    ${status === "Accepted"
 
-                            ? `
+                    ? `
 
                                 <button
 
@@ -615,16 +612,15 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
 
                     <!-- OUT FOR DELIVERY -->
 
-                    ${
-                        status === "Preparing"
+                    ${status === "Preparing"
 
-                            ? `
+                    ? `
 
                                 <button
 
@@ -645,17 +641,16 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
 
                     <!-- DELIVERED -->
 
-                    ${
-                        status ===
-                        "Out For Delivery"
+                    ${status ===
+                    "Out For Delivery"
 
-                            ? `
+                    ? `
 
                                 <button
 
@@ -676,17 +671,16 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
 
                     <!-- PAYMENT -->
 
-                    ${
-                        order.paymentStatus !==
-                        "Paid"
+                    ${order.paymentStatus !==
+                    "Paid"
 
-                            ? `
+                    ? `
 
                                 <button
 
@@ -706,14 +700,13 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
 
-                    ${
-                        status === "Delivered"
+                    ${status === "Delivered"
 
-                            ? `
+                    ? `
 
                                 <div class="alert alert-success mt-3">
 
@@ -723,8 +716,8 @@ async function loadOrders() {
 
                             `
 
-                            : ""
-                    }
+                    : ""
+                }
 
                 </div>
 
@@ -1233,4 +1226,585 @@ if (adminNameElement) {
         adminUser.fullName ||
         adminUser.email ||
         "Admin";
+}
+// ==========================================
+// 💼 JOB APPLICATIONS
+// ==========================================
+
+async function loadJobApplications() {
+
+    const container =
+        document.getElementById("jobApplications");
+
+    if (!container) return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:8000/job-applications",
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const applications = await response.json();
+        window.allJobApplications = applications;
+
+        if (!response.ok) {
+            throw new Error(
+                applications.message ||
+                "Failed to load applications"
+            );
+        }
+
+        if (!applications.length) {
+
+            container.innerHTML = `
+                <div class="alert alert-dark border border-warning text-light">
+                    No job applications found.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = applications.map(app => `
+
+            <div class="card bg-dark text-light border border-warning mb-3 p-3">
+
+                <h4 class="text-warning">
+                    👤 ${app.fullName}
+                </h4>
+
+                <p>📱 ${app.mobile}</p>
+                <p>📧 ${app.email}</p>
+                <p>👨‍🍳 <strong>${app.jobRole}</strong></p>
+                <p>💼 Experience: ${app.experience}</p>
+                <p>🏢 Previous Company: ${app.previousCompany || "N/A"}</p>
+                <p>💰 Expected Salary: ${app.expectedSalary}</p>
+                <p>📅 Availability: ${app.availability}</p>
+                <p>📍 Address: ${app.address}</p>
+                ${app.cv && app.cv.fileName ? `
+    <button
+        class="btn btn-outline-warning mt-2"
+        onclick="downloadJobApplicationCV('${app._id}')">
+        📄 Download CV
+    </button>
+` : `
+    <p class="text-secondary mt-2">
+        📄 CV not uploaded
+    </p>
+`}
+
+                <div class="mt-3">
+
+                    <label class="text-warning fw-bold">
+                        Application Status
+                    </label>
+
+                    <select
+                        class="form-select bg-dark text-light border-warning mt-2"
+                        onchange="updateJobApplicationStatus('${app._id}', this.value)"
+                    >
+
+                        <option value="Pending"
+                            ${app.status === "Pending" ? "selected" : ""}>
+                            Pending
+                        </option>
+
+                        <option value="Shortlisted"
+                            ${app.status === "Shortlisted" ? "selected" : ""}>
+                            Shortlisted
+                        </option>
+
+                        <option value="Rejected"
+                            ${app.status === "Rejected" ? "selected" : ""}>
+                            Rejected
+                        </option>
+
+                        <option value="Hired"
+                            ${app.status === "Hired" ? "selected" : ""}>
+                            Hired
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+    } catch (error) {
+
+        console.error(
+            "Job Applications Error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="alert alert-danger">
+                ❌ Unable to load job applications.
+            </div>
+        `;
+    }
+}
+
+
+// UPDATE APPLICATION STATUS
+
+async function updateJobApplicationStatus(
+    applicationId,
+    status
+) {
+
+    const token = localStorage.getItem("token");
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:8000/update-job-application-status",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    applicationId,
+                    status
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            if (result.success) {
+
+                // Update local application data
+                const application =
+                    window.allJobApplications?.find(
+                        app => app._id === applicationId
+                    );
+
+                if (application) {
+                    application.status = status;
+                }
+
+                // Re-apply current search/filter
+                filterJobApplications();
+
+                alert("✅ Application status updated!");
+            }
+
+        } else {
+
+            alert(
+                "❌ " +
+                (result.message || "Update failed")
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Status Update Error:",
+            error
+        );
+
+        alert("❌ Server error");
+    }
+}
+
+
+// LOAD APPLICATIONS
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadJobApplications
+);
+// ==========================================
+// 📄 DOWNLOAD JOB APPLICATION CV
+// ==========================================
+
+async function downloadJobApplicationCV(applicationId) {
+
+    const token = localStorage.getItem("token");
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:8000/job-application/${applicationId}/cv`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) {
+
+            const errorData =
+                await response.json().catch(() => ({}));
+
+            throw new Error(
+                errorData.message || "CV download failed"
+            );
+        }
+
+        const blob = await response.blob();
+
+        const disposition =
+            response.headers.get("Content-Disposition") || "";
+
+        const match =
+            disposition.match(/filename="([^"]+)"/i);
+
+        const fileName =
+            match ? match[1] : "resume";
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const link =
+            document.createElement("a");
+
+        link.href = url;
+        link.download = fileName;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+        URL.revokeObjectURL(url);
+
+    } catch (error) {
+
+        console.error(
+            "CV Download Error:",
+            error
+        );
+
+        alert(
+            "❌ Unable to download CV"
+        );
+    }
+}
+
+window.downloadJobApplicationCV =
+    downloadJobApplicationCV;
+
+// ==========================================
+// 🔍 JOB APPLICATION SEARCH + FILTER
+// ==========================================
+
+function filterJobApplications() {
+
+    const searchInput =
+        document.getElementById("jobSearch");
+
+    const statusFilter =
+        document.getElementById("jobStatusFilter");
+
+    if (!searchInput || !statusFilter) return;
+
+    const searchText =
+        searchInput.value.toLowerCase().trim();
+
+    const selectedStatus =
+        statusFilter.value;
+
+    const applications =
+        window.allJobApplications || [];
+
+    const filteredApplications =
+        applications.filter(app => {
+
+            const name =
+                (app.fullName || "").toLowerCase();
+
+            const mobile =
+                (app.mobile || "").toLowerCase();
+
+            const email =
+                (app.email || "").toLowerCase();
+
+            const matchesSearch =
+                name.includes(searchText) ||
+                mobile.includes(searchText) ||
+                email.includes(searchText);
+
+            const matchesStatus =
+                selectedStatus === "All" ||
+                app.status === selectedStatus;
+
+            return matchesSearch && matchesStatus;
+        });
+
+    renderFilteredJobApplications(filteredApplications);
+}
+
+
+// ==========================================
+// 🎨 RENDER FILTERED APPLICATIONS
+// ==========================================
+
+function renderFilteredJobApplications(applications) {
+
+    const container =
+        document.getElementById("jobApplications");
+
+    if (!container) return;
+
+    if (!applications.length) {
+
+        container.innerHTML = `
+            <div class="alert alert-dark border border-warning text-light">
+                🔍 No matching applications found.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        applications.map(app => `
+
+        <div class="card bg-dark text-light border border-warning mb-3 p-3">
+
+            <h4 class="text-warning">
+                👤 ${app.fullName}
+            </h4>
+
+            <p>📱 ${app.mobile}</p>
+
+            <p>📧 ${app.email}</p>
+
+            <p>
+                👨‍🍳 <strong>${app.jobRole}</strong>
+            </p>
+
+            <p>
+                💼 Experience:
+                ${app.experience}
+            </p>
+
+            <p>
+                🏢 Previous Company:
+                ${app.previousCompany || "N/A"}
+            </p>
+
+            <p>
+                💰 Expected Salary:
+                ${app.expectedSalary}
+            </p>
+
+            <p>
+                📅 Availability:
+                ${app.availability}
+            </p>
+
+            <p>
+                📍 Address:
+                ${app.address}
+            </p>
+
+            ${app.cv && app.cv.fileName
+                ? `
+                    <button
+                        class="btn btn-outline-warning mt-2"
+                        onclick="downloadJobApplicationCV('${app._id}')">
+                        📄 Download CV
+                    </button>
+                `
+                : `
+                    <p class="text-secondary mt-2">
+                        📄 CV not uploaded
+                    </p>
+                `
+            }
+
+            <div class="mt-3">
+
+                <label class="text-warning fw-bold">
+                    Application Status
+                </label>
+
+                <select
+                    class="form-select bg-dark text-light border-warning mt-2"
+                    onchange="updateJobApplicationStatus('${app._id}', this.value)"
+                >
+
+                    <option value="Pending"
+                        ${app.status === "Pending" ? "selected" : ""}>
+                        Pending
+                    </option>
+
+                    <option value="Shortlisted"
+                        ${app.status === "Shortlisted" ? "selected" : ""}>
+                        Shortlisted
+                    </option>
+
+                    <option value="Rejected"
+                        ${app.status === "Rejected" ? "selected" : ""}>
+                        Rejected
+                    </option>
+
+                    <option value="Hired"
+                        ${app.status === "Hired" ? "selected" : ""}>
+                        Hired
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    `).join("");
+}
+
+
+// ==========================================
+// 🎛️ SEARCH + FILTER EVENTS
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const search =
+        document.getElementById("jobSearch");
+
+    const filter =
+        document.getElementById("jobStatusFilter");
+
+    if (search) {
+        search.addEventListener(
+            "input",
+            filterJobApplications
+        );
+    }
+
+    if (filter) {
+        filter.addEventListener(
+            "change",
+            filterJobApplications
+        );
+    }
+
+});
+/* ==========================================
+   ADMIN SIDEBAR NAVIGATION
+========================================== */
+
+function showAdminSection(section) {
+
+    // Dashboard elements
+    const dashboardElements = [
+        document.querySelector(".admin-profile"),
+        document.querySelector(".admin-profile + .text-center"),
+        document.querySelector(".row.mb-4"),
+        document.querySelector(".card.p-4.mt-4"),
+        document.querySelector(".card.p-3.mt-4")
+    ];
+
+    // Orders elements
+    const orderElements = [
+        document.getElementById("searchOrder"),
+        document.getElementById("statusFilter"),
+        document.getElementById("orders")
+    ];
+
+    // Reservation elements
+    const reservationElements = [
+        document.querySelector("h2.text-warning.mt-5"),
+        document.getElementById("reservationList")
+    ];
+
+    // Job Application elements
+    const jobElements = [
+        document.getElementById("jobApplicationsSection"),
+        document.querySelector("#jobApplicationsSection + .row")
+    ];
+
+    // Hide everything first
+    [
+        ...dashboardElements,
+        ...orderElements,
+        ...reservationElements,
+        ...jobElements
+    ].forEach(element => {
+        if (element) {
+            element.style.display = "none";
+        }
+    });
+
+    // Show selected section
+    let selectedElements = [];
+
+    if (section === "dashboard") {
+        selectedElements = dashboardElements;
+    }
+
+    if (section === "orders") {
+        selectedElements = orderElements;
+    }
+
+    if (section === "reservations") {
+        selectedElements = reservationElements;
+    }
+
+    if (section === "jobs") {
+        selectedElements = jobElements;
+    }
+
+    selectedElements.forEach(element => {
+        if (element) {
+            element.style.display = "";
+        }
+    });
+
+    // Active sidebar button
+    document.querySelectorAll(".sidebar-menu button").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    const activeButton = document.querySelector(
+        `.sidebar-menu button[onclick="showAdminSection('${section}')"]`
+    );
+
+    if (activeButton) {
+        activeButton.classList.add("active");
+    }
+}
+
+
+/* Default section */
+document.addEventListener("DOMContentLoaded", () => {
+    showAdminSection("dashboard");
+});
+
+/* ==========================================
+   MOBILE SIDEBAR TOGGLE
+========================================== */
+
+function toggleAdminSidebar() {
+    const sidebar = document.getElementById("adminSidebar");
+
+    if (sidebar) {
+        sidebar.classList.toggle("mobile-open");
+    }
 }

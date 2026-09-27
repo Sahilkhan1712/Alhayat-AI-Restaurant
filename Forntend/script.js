@@ -1193,3 +1193,63 @@ function toggleMobileMenu() {
         menu.classList.toggle("mobile-menu-open");
     }
 }
+// ==========================================
+// JOB APPLICATION FORM
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const jobForm = document.getElementById("jobApplicationForm");
+
+    if (!jobForm) return;
+
+    jobForm.addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        // FormData automatically includes text fields + CV file
+        const formData = new FormData(jobForm);
+
+        try {
+
+            const response = await fetch(
+                "https://alhayat-ai-restaurant-backend.onrender.com/job-application",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                alert("✅ Application submitted successfully!");
+
+                jobForm.reset();
+
+            } else {
+
+                alert(
+                    "❌ " +
+                    (result.message || "Application failed")
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Job Application Error:",
+                error
+            );
+
+            alert(
+                "❌ Server error. Please try again."
+            );
+
+        }
+
+    });
+
+});

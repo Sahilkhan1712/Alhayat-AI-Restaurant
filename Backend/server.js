@@ -8,6 +8,35 @@ const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
+const multer = require("multer");
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+
+    fileFilter: (req, file, cb) => {
+
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(
+                new Error(
+                    "Only PDF, DOC and DOCX files are allowed."
+                )
+            );
+        }
+    }
+});
+
 
 require("dotenv").config();
 
@@ -16,6 +45,9 @@ const authRoutes = require("./routes/auth");
 
 const Order = require("./models/order");
 const Reservation = require("./models/Reservation");
+const JobApplication = require("./models/JobApplication");
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -907,6 +939,249 @@ app.post(
                 message:
                     "Reservation Failed"
 
+            });
+
+        }
+
+    }
+);
+
+
+// ===============================
+// JOB APPLICATIONS
+// ===============================
+
+// SUBMIT JOB APPLICATION
+// SUBMIT JOB APPLICATION
+app.post(
+    "/job-application",
+    upload.single("cv"),
+    async (req, res) => {
+
+        try {
+
+            const application = new JobApplication({
+
+                fullName: req.body.fullName,
+
+                age: req.body.age,
+
+                mobile: req.body.mobile,
+
+                email: req.body.email,
+
+                address: req.body.address,
+
+                jobRole: req.body.jobRole,
+
+                experience: req.body.experience,
+
+                previousCompany:
+                    req.body.previousCompany || "",
+
+                expectedSalary:
+                    req.body.expectedSalary,
+
+                availability:
+                    req.body.availability,
+
+                cv: req.file
+                    ? {
+                        fileName:
+                            req.file.originalname,
+
+                        contentType:
+                            req.file.mimetype,
+
+                        data:
+                            req.file.buffer
+                    }
+                    : {},
+
+                additionalMessage:
+                    req.body.additionalMessage || ""
+
+            });
+
+            await application.save();
+
+            res.status(201).json({
+
+                success: true,
+
+                message:
+                    "Job application submitted successfully"
+
+            });
+
+        } catch (error) {
+
+            console.log(
+                "Job Application Error:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Job application failed"
+
+            });
+
+        }
+
+    }
+);
+// ===============================
+// DOWNLOAD JOB APPLICATION CV
+// ADMIN ONLY
+// ===============================
+
+app.get(
+    "/job-application/:id/cv",
+    authenticateToken,
+    adminOnly,
+    async (req, res) => {
+
+        try {
+
+            const application =
+                await JobApplication.findById(
+                    req.params.id
+                );
+
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found"
+                });
+            }
+
+            if (
+                !application.cv ||
+                !application.cv.data
+            ) {
+                return res.status(404).json({
+                    success: false,
+                    message: "CV not found"
+                });
+            }
+
+            res.setHeader(
+                "Content-Type",
+                application.cv.contentType ||
+                "application/octet-stream"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${application.cv.fileName || "resume"}"`
+            );
+
+            res.send(application.cv.data);
+
+        } catch (error) {
+
+            console.log(
+                "CV Download Error:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: "Unable to download CV"
+            });
+
+        }
+
+    }
+);
+
+
+// GET ALL JOB APPLICATIONS
+// ADMIN ONLY
+app.get(
+    "/job-applications",
+    authenticateToken,
+    adminOnly,
+    async (req, res) => {
+
+        try {
+
+            const applications =
+                await JobApplication
+                    .find()
+                    .sort({ createdAt: -1 });
+
+            res.json(applications);
+
+        } catch (error) {
+
+            console.log(
+                "Job Applications Fetch Error:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: "Error fetching job applications"
+            });
+
+        }
+
+    }
+);
+
+
+// UPDATE JOB APPLICATION STATUS
+// ADMIN ONLY
+app.post(
+    "/update-job-application-status",
+    authenticateToken,
+    adminOnly,
+    async (req, res) => {
+
+        try {
+
+            const {
+                applicationId,
+                status
+            } = req.body;
+
+            const updated =
+                await JobApplication.findByIdAndUpdate(
+                    applicationId,
+                    { status },
+                    { new: true }
+                );
+
+            if (!updated) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found"
+                });
+
+            }
+
+            res.json({
+                success: true,
+                message: "Application status updated",
+                application: updated
+            });
+
+        } catch (error) {
+
+            console.log(
+                "Job Application Status Error:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: "Status update failed"
             });
 
         }
