@@ -1206,6 +1206,7 @@ window.updateReservationStatus =
 loadOrders();
 
 loadReservations();
+loadJobApplications();
 function logoutAdmin() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
