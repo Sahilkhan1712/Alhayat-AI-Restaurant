@@ -1,11 +1,80 @@
 // ==========================================
+// NORMAL LOGIN
+// ==========================================
+
+async function login() {
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+    }
+
+    try {
+
+        const res = await fetch(
+            "https://alhayat-ai-restaurant-backend.onrender.com/auth/login",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.message || "Login Failed");
+            return;
+        }
+
+        // Save login data
+        localStorage.setItem("token", data.token);
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+        );
+
+        alert("Login Successful");
+
+        // Redirect according to role
+        if (data.user.role === "admin") {
+
+            window.location.href = "admin.html";
+
+        } else {
+
+            window.location.href = "index.html";
+        }
+
+    } catch (error) {
+
+        console.error("Login Error:", error);
+
+        alert("Login Failed. Please try again.");
+    }
+}
+
+
+// ==========================================
 // GOOGLE LOGIN
 // ==========================================
 
 function loginWithGoogle() {
 
     if (!window.google) {
+
         alert("Google Login is loading. Please try again.");
+
         return;
     }
 
@@ -18,7 +87,6 @@ function loginWithGoogle() {
     });
 
     google.accounts.id.prompt();
-
 }
 
 
@@ -45,33 +113,24 @@ async function handleGoogleLogin(response) {
             }
         );
 
-
         const data = await res.json();
-
 
         if (!data.success) {
 
             alert(data.message || "Google Login Failed");
 
             return;
-
         }
 
-
         // Save login data
-        localStorage.setItem(
-            "token",
-            data.token
-        );
+        localStorage.setItem("token", data.token);
 
         localStorage.setItem(
             "user",
             JSON.stringify(data.user)
         );
 
-
         alert("Google Login Successful");
-
 
         // Redirect according to role
         if (data.user.role === "admin") {
@@ -81,9 +140,7 @@ async function handleGoogleLogin(response) {
         } else {
 
             window.location.href = "index.html";
-
         }
-
 
     } catch (error) {
 
@@ -93,7 +150,5 @@ async function handleGoogleLogin(response) {
         );
 
         alert("Google Login Failed. Please try again.");
-
     }
-
 }
