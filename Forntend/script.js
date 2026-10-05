@@ -1196,19 +1196,44 @@ function toggleMobileMenu() {
 // ==========================================
 // JOB APPLICATION FORM
 // ==========================================
+// ==========================================
+// JOB APPLICATION FORM
+// ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+function setupJobApplicationForm() {
 
-    const jobForm = document.getElementById("jobApplicationForm");
+    const jobForm =
+        document.getElementById("jobApplicationForm");
 
-    if (!jobForm) return;
+    if (!jobForm) {
+        console.log("❌ Job Application Form not found");
+        return;
+    }
+
+    // Prevent duplicate event listener
+    if (jobForm.dataset.handlerAttached === "true") {
+        return;
+    }
+
+    jobForm.dataset.handlerAttached = "true";
 
     jobForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
+        e.stopPropagation();
 
-        // FormData automatically includes text fields + CV file
-        const formData = new FormData(jobForm);
+        console.log("🚀 Job Application Submit Started");
+
+        const submitButton =
+            jobForm.querySelector('button[type="submit"]');
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = "⏳ Submitting...";
+        }
+
+        const formData =
+            new FormData(jobForm);
 
         try {
 
@@ -1220,11 +1245,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
-            const result = await response.json();
+            const result =
+                await response.json();
 
-            if (result.success) {
+            console.log(
+                "Job Application Response:",
+                result
+            );
 
-                alert("✅ Application submitted successfully!");
+            if (response.ok && result.success) {
+
+                alert(
+                    "✅ Application submitted successfully!"
+                );
 
                 jobForm.reset();
 
@@ -1232,7 +1265,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert(
                     "❌ " +
-                    (result.message || "Application failed")
+                    (result.message ||
+                    "Application failed")
                 );
 
             }
@@ -1240,7 +1274,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "Job Application Error:",
+                "❌ Job Application Error:",
                 error
             );
 
@@ -1248,8 +1282,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 "❌ Server error. Please try again."
             );
 
+        } finally {
+
+            if (submitButton) {
+
+                submitButton.disabled = false;
+
+                submitButton.innerHTML =
+                    "📨 Submit Application";
+
+            }
+
         }
 
     });
 
-});
+    console.log(
+        "✅ Job Application Handler Attached"
+    );
+}
+
+
+// Run whether DOM is already loaded or not
+if (document.readyState === "loading") {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        setupJobApplicationForm
+    );
+
+} else {
+
+    setupJobApplicationForm();
+
+}
