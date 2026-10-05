@@ -1,66 +1,98 @@
-async function login() {
+// ==========================================
+// GOOGLE LOGIN
+// ==========================================
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+function loginWithGoogle() {
 
-    if (!email || !password) {
-        alert("Please fill all fields");
+    if (!window.google) {
+        alert("Google Login is loading. Please try again.");
         return;
     }
 
+    google.accounts.id.initialize({
+
+        client_id: "790936495034-53ncoiibiqc7oqn13as89ctb4j4fvga1.apps.googleusercontent.com",
+
+        callback: handleGoogleLogin
+
+    });
+
+    google.accounts.id.prompt();
+
+}
+
+
+// ==========================================
+// GOOGLE LOGIN CALLBACK
+// ==========================================
+
+async function handleGoogleLogin(response) {
+
     try {
 
-        const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/auth/login", {
+        const res = await fetch(
+            "https://alhayat-ai-restaurant-backend.onrender.com/auth/google",
+            {
+                method: "POST",
 
-            method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                email,
-                password
-            })
-
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-
-            // Save JWT Token
-            localStorage.setItem("token", data.token);
-
-            // Save User Information
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            alert("Login Successful");
-
-            // Check User Role
-            if (data.user.role === "admin") {
-
-                // Admin → Admin Panel
-                window.location.href = "admin.html";
-
-            } else {
-
-                // Normal User → Home Page
-                window.location.href = "index.html";
-
+                body: JSON.stringify({
+                    credential: response.credential
+                })
             }
+        );
 
-        } else {
 
-            alert(data.message || "Invalid email or password");
+        const data = await res.json();
+
+
+        if (!data.success) {
+
+            alert(data.message || "Google Login Failed");
+
+            return;
 
         }
 
+
+        // Save login data
+        localStorage.setItem(
+            "token",
+            data.token
+        );
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+        );
+
+
+        alert("Google Login Successful");
+
+
+        // Redirect according to role
+        if (data.user.role === "admin") {
+
+            window.location.href = "admin.html";
+
+        } else {
+
+            window.location.href = "index.html";
+
+        }
+
+
     } catch (error) {
 
-        console.error("Login Error:", error);
+        console.error(
+            "Google Login Error:",
+            error
+        );
 
-        alert("Server Error. Please try again.");
+        alert("Google Login Failed. Please try again.");
 
     }
 

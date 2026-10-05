@@ -1,10 +1,15 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 
 const User = require("../models/User");
 
 const router = express.Router();
+
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID
+);
 
 
 // ==========================================
@@ -23,20 +28,16 @@ router.post("/signup", async (req, res) => {
         } = req.body;
 
 
-        // Check required fields
         if (!name || !email || !password) {
 
             return res.status(400).json({
-
                 success: false,
                 message: "Please fill all required fields"
-
             });
 
         }
 
 
-        // Check if user already exists
         const existingUser =
             await User.findOne({ email });
 
@@ -44,22 +45,17 @@ router.post("/signup", async (req, res) => {
         if (existingUser) {
 
             return res.status(400).json({
-
                 success: false,
                 message: "Email already registered"
-
             });
 
         }
 
 
-        // Hash password
         const hashedPassword =
             await bcrypt.hash(password, 10);
 
 
-        // IMPORTANT:
-        // New signup will always be a normal user
         const newUser = new User({
 
             name,
@@ -77,7 +73,6 @@ router.post("/signup", async (req, res) => {
         res.status(201).json({
 
             success: true,
-
             message: "Signup Successful"
 
         });
@@ -94,7 +89,6 @@ router.post("/signup", async (req, res) => {
         res.status(500).json({
 
             success: false,
-
             message: "Server Error"
 
         });
@@ -105,7 +99,7 @@ router.post("/signup", async (req, res) => {
 
 
 // ==========================================
-// LOGIN
+// NORMAL LOGIN
 // ==========================================
 
 router.post("/login", async (req, res) => {
@@ -118,22 +112,18 @@ router.post("/login", async (req, res) => {
         } = req.body;
 
 
-        // Check fields
         if (!email || !password) {
 
             return res.status(400).json({
 
                 success: false,
-
-                message:
-                    "Email and password are required"
+                message: "Email and password are required"
 
             });
 
         }
 
 
-        // Find user
         const user =
             await User.findOne({ email });
 
@@ -143,7 +133,6 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({
 
                 success: false,
-
                 message: "User not found"
 
             });
@@ -151,7 +140,6 @@ router.post("/login", async (req, res) => {
         }
 
 
-        // Compare password
         const isMatch =
             await bcrypt.compare(
                 password,
@@ -164,7 +152,6 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({
 
                 success: false,
-
                 message: "Invalid Password"
 
             });
@@ -172,18 +159,9 @@ router.post("/login", async (req, res) => {
         }
 
 
-        // =====================================
-        // USER ROLE
-        // =====================================
+        const role =
+            user.role || "user";
 
-        // If old user doesn't have role,
-        // treat them as normal user.
-        const role = user.role || "user";
-
-
-        // =====================================
-        // CREATE JWT
-        // =====================================
 
         const token = jwt.sign(
 
@@ -201,10 +179,6 @@ router.post("/login", async (req, res) => {
         );
 
 
-        // =====================================
-        // LOGIN RESPONSE
-        // =====================================
-
         res.json({
 
             success: true,
@@ -216,13 +190,9 @@ router.post("/login", async (req, res) => {
             user: {
 
                 id: user._id,
-
                 name: user.name,
-
                 email: user.email,
-
                 phone: user.phone,
-
                 role: role
 
             }
@@ -241,8 +211,185 @@ router.post("/login", async (req, res) => {
         res.status(500).json({
 
             success: false,
-
             message: "Server Error"
+
+        });
+
+    }
+
+});
+
+
+// ==========================================
+// GOOGLE LOGIN
+// ==========================================
+
+router.post("/google", async (req, res) => {
+
+    try {
+
+        const { credential } = req.body;
+
+
+        if (!credential) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Google credential is required"
+
+            });
+
+        }
+
+
+        // Verify Google ID Token
+        const ticket =
+            await googleClient.verifyIdToken({
+
+                idToken: credential,
+
+                audience:
+                    process.env.GOOGLE_CLIENT_ID
+
+            });
+
+
+        const payload =
+            ticket.getPayload();
+
+
+        const googleEmail =
+            payload.email;
+
+        const googleName =
+            payload.name;
+
+        const googlePicture =
+            payload.picture;
+
+
+        if (!googleEmail) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Google email not found"
+
+            });
+
+        }
+
+
+        // Find existing user
+        let user =
+            await User.findOne({
+                email: googleEmail
+            });
+
+
+        // Create new user
+        if (!user) {
+
+            const randomPassword =
+                Math.random().toString(36) +
+                Date.now().toString();
+
+
+            const hashedPassword =
+                await bcrypt.hash(
+                    randomPassword,
+                    10
+                );
+
+
+            user = new User({
+
+                name:
+                    googleName || "Google User",
+
+                email:
+                    googleEmail,
+
+                password:
+                    hashedPassword,
+
+                role:
+                    "user"
+
+            });
+
+
+            await user.save();
+
+        }
+
+
+        const role =
+            user.role || "user";
+
+
+        // Create JWT
+        const token =
+            jwt.sign(
+
+                {
+                    id: user._id,
+                    role: role
+                },
+
+                process.env.JWT_SECRET,
+
+                {
+                    expiresIn: "7d"
+                }
+
+            );
+
+
+        res.json({
+
+            success: true,
+
+            message:
+                "Google Login Successful",
+
+            token,
+
+            user: {
+
+                id: user._id,
+
+                name: user.name,
+
+                email: user.email,
+
+                phone: user.phone,
+
+                role: role,
+
+                picture:
+                    googlePicture || ""
+
+            }
+
+        });
+
+
+    } catch (error) {
+
+        console.log(
+            "Google Login Error:",
+            error
+        );
+
+
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                "Google Login Failed"
 
         });
 
