@@ -1245,7 +1245,7 @@ async function loadJobApplications() {
     try {
 
         const response = await fetch(
-            "http://localhost:8000/job-applications",
+            "https://alhayat-ai-restaurant-backend.onrender.com",
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -1369,7 +1369,7 @@ async function updateJobApplicationStatus(
     try {
 
         const response = await fetch(
-            "http://localhost:8000/update-job-application-status",
+            "https://alhayat-ai-restaurant-backend.onrender.com",
             {
                 method: "POST",
 
@@ -1445,7 +1445,7 @@ async function downloadJobApplicationCV(applicationId) {
     try {
 
         const response = await fetch(
-            `http://localhost:8000/job-application/${applicationId}/cv`,
+            `https://alhayat-ai-restaurant-backend.onrender.com`,
             {
                 method: "GET",
                 headers: {
