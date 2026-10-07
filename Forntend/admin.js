@@ -1790,6 +1790,12 @@ function showAdminSection(section) {
     if (activeButton) {
         activeButton.classList.add("active");
     }
+    // Close mobile sidebar after selecting a section
+    const sidebar = document.getElementById("adminSidebar");
+
+    if (sidebar && window.innerWidth <= 768) {
+        sidebar.classList.remove("mobile-open");
+    }
 }
 
 
