@@ -1193,6 +1193,25 @@ function toggleMobileMenu() {
         menu.classList.toggle("mobile-menu-open");
     }
 }
+
+function closeMobileMenu() {
+    const menu = document.getElementById("navbarLinks");
+
+    if (menu) {
+        menu.classList.remove("mobile-menu-open");
+    }
+}
+
+// Close mobile menu after clicking any menu item
+document.addEventListener("click", function (e) {
+
+    const clickedLink = e.target.closest("#navbarLinks a");
+
+    if (clickedLink) {
+        closeMobileMenu();
+    }
+
+});
 // ==========================================
 // JOB APPLICATION FORM
 // ==========================================
