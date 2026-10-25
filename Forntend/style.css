@@ -3223,5 +3223,97 @@ nav.navbar {
 }
 
 
+/* AlHayat: compact mobile navbar */
+@media (max-width: 768px) {
+    nav.navbar {
+        height: 78px;
+        min-height: 78px;
+        padding: 6px 12px !important;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0;
+        border-bottom-width: 1px !important;
+        border-radius: 0 0 14px 14px;
+    }
+
+    .navbar-brand {
+        order: 1;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex: 0 1 auto;
+        min-width: 0;
+    }
+
+    .navbar .logo {
+        height: 62px !important;
+        width: auto;
+        max-width: 118px;
+        object-fit: contain;
+        transform: none !important;
+    }
+
+    .dark-mode-btn {
+        order: 2;
+        margin: 0 0 0 auto !important;
+        padding: 0 !important;
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px !important;
+        font-size: 0 !important;
+        flex-shrink: 0;
+    }
+
+    .dark-mode-btn::first-letter {
+        font-size: 21px;
+    }
+
+    .mobile-menu-btn {
+        order: 3;
+        display: block;
+        margin: 0 0 0 8px !important;
+        padding: 0 5px !important;
+        font-size: 28px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    #navbarLinks {
+        order: 4;
+    }
+
+    body {
+        padding-top: 78px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    nav.navbar {
+        justify-content: flex-start !important;
+    }
+
+    .navbar-brand {
+        margin-right: auto !important;
+    }
+
+    .dark-mode-btn {
+        order: 2 !important;
+        margin-left: 0 !important;
+        margin-right: 8px !important;
+        flex: 0 0 42px;
+        position: static !important;
+    }
+
+    .mobile-menu-btn {
+        order: 3 !important;
+        margin-left: 0 !important;
+        flex: 0 0 auto;
+    }
+}
+
 
 

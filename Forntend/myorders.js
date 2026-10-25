@@ -370,7 +370,7 @@ async function loadMyOrders() {
                         ${item.name || "Food Item"}
                         × ${item.qty || 1}
                         — ₹${Number(item.price || 0) *
-                            Number(item.qty || 1)}
+                    Number(item.qty || 1)}
                     </li>
                 `)
                 .join("");
@@ -406,10 +406,16 @@ async function loadMyOrders() {
                         ${order.status || "Pending"}
                     </p>
 
-                    <p>
-                        <b>💳 Payment:</b>
-                        ${order.paymentMethod || "Not Selected"}
-                    </p>
+                    
+<p>
+    <b>💳 Payment:</b>
+    ${order.paymentMethod || "Not Selected"}
+</p>
+
+<p>
+    <b>💰 Payment Status:</b>
+    ${order.paymentStatus || "Pending"}
+</p>
 
                     <h5 class="mt-3">
                         🍽️ Ordered Items
@@ -424,12 +430,11 @@ async function loadMyOrders() {
                     </h4>
 
                     <small class="d-block mt-2">
-                        ${
-                            order.createdAt
-                            ? new Date(order.createdAt)
-                                .toLocaleString()
-                            : ""
-                        }
+                        ${order.createdAt
+                    ? new Date(order.createdAt)
+                        .toLocaleString()
+                    : ""
+                }
                     </small>
 
                 </div>

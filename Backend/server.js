@@ -348,74 +348,74 @@ ${menuText}
             }
         ];
 
-const response = await fetch(
-"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
-    {    
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": process.env.GEMINI_API_KEY
-        },
-        body: JSON.stringify({
-            systemInstruction: {
-                parts: [
-                    {
-                        text: systemPrompt
-                    }
-                ]
-            },
-            contents: conversation
-                .filter(msg => msg.role !== "system")
-                .map(msg => ({
-                    role: msg.role === "assistant" ? "model" : "user",
-                    parts: [
-                        {
-                            text: msg.content
-                        }
-                    ]
-                }))
-        })
+        const response = await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": process.env.GEMINI_API_KEY
+                },
+                body: JSON.stringify({
+                    systemInstruction: {
+                        parts: [
+                            {
+                                text: systemPrompt
+                            }
+                        ]
+                    },
+                    contents: conversation
+                        .filter(msg => msg.role !== "system")
+                        .map(msg => ({
+                            role: msg.role === "assistant" ? "model" : "user",
+                            parts: [
+                                {
+                                    text: msg.content
+                                }
+                            ]
+                        }))
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                `Gemini API ${response.status}: ${JSON.stringify(data.error)}`
+            );
+        }
+
+        const reply =
+            data.candidates?.[0]?.content?.parts
+                ?.map(part => part.text || "")
+                .join("")
+                .trim() ||
+            "Sorry, AI could not generate a response.";
+
+
+
+
+
+        res.json({
+            success: true,
+            reply
+        });
     }
-);
+    catch (error) {
 
-const data = await response.json();
+        console.error("❌❌❌ AI CHAT ERROR ❌❌❌");
+        console.error("Message:", error.message);
+        console.error("Status:", error.status);
+        console.error("Code:", error.code);
+        console.error("Type:", error.type);
+        console.error("Full Error:", error);
 
-if (!response.ok) {
-    throw new Error(
-        `Gemini API ${response.status}: ${JSON.stringify(data.error)}`
-    );
-}
-
-const reply =
-    data.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("")
-        .trim() ||
-    "Sorry, AI could not generate a response.";
-
-
-   
-
-
-res.json({
-    success: true,
-    reply
-});
-    } 
-   catch (error) {
-
-    console.error("❌❌❌ AI CHAT ERROR ❌❌❌");
-    console.error("Message:", error.message);
-    console.error("Status:", error.status);
-    console.error("Code:", error.code);
-    console.error("Type:", error.type);
-    console.error("Full Error:", error);
-
-    res.status(500).json({
-        success: false,
-        message: error.message || "AI Assistant error"
-    });
-}
+        res.status(500).json({
+            success: false,
+            message: error.message || "AI Assistant error"
+        });
+    }
 });
 
 
@@ -1287,13 +1287,58 @@ app.post(
 // START SERVER
 // ===============================
 
+// DEMO PAYMENT — NO REAL MONEY
+// LOCAL DEMO ONLY — NO REAL PAYMENT
+app.post("/demo-payment", async (req, res) => {
+    try {
+        const { orderId, outcome } = req.body;
+
+        if (!orderId || !["success", "failure"].includes(outcome)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid demo payment request"
+            });
+        }
+
+        const paymentStatus =
+            outcome === "success" ? "Paid (Demo)" : "Failed (Demo)";
+
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { paymentStatus },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        return res.json({
+            success: outcome === "success",
+            paymentStatus,
+            orderId: order._id,
+            message: outcome === "success"
+                ? "Demo payment successful. No money was charged."
+                : "Demo payment failed. No money was charged."
+        });
+    } catch (error) {
+        console.error("Demo Payment Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Demo payment could not be processed"
+        });
+    }
+});
+
 server.listen(
     process.env.PORT || 8000,
     () => {
 
         console.log(
-            `Server running on port ${
-                process.env.PORT || 8000
+            `Server running on port ${process.env.PORT || 8000
             }`
         );
 
