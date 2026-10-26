@@ -1744,6 +1744,30 @@ select {
         font-size: 25px;
     }
 
+    .ai-input-area {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 38px 38px 52px;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .ai-input-area input {
+        min-width: 0;
+        width: 100%;
+        padding: 12px 8px;
+        font-size: 14px;
+    }
+
+    .ai-mic-btn,
+    .ai-voice-toggle {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 18px;
+    }
+
     .ai-3d-card {
         padding: 22px;
         border-radius: 22px;
