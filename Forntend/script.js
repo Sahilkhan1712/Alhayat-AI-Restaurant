@@ -3,7 +3,7 @@ let discount = 0;
 
 
 const socket = typeof io !== "undefined"
-    ? io("http://localhost:8000")
+    ? io("https://alhayat-ai-restaurant-backend.onrender.com")
     : null;
 
 
@@ -458,7 +458,7 @@ async function placeOrder() {
         };
 
         const response = await fetch(
-            "http://localhost:8000/place-order",
+            "https://alhayat-ai-restaurant-backend.onrender.com/place-order",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -540,7 +540,7 @@ async function reserveTable() {
 
     const response =
         await fetch(
-            "http://localhost:8000/reserve-table",
+            "https://alhayat-ai-restaurant-backend.onrender.com/reserve-table",
             {
                 method: "POST",
 
@@ -623,7 +623,7 @@ async function trackOrder() {
     try {
 
         const response = await fetch(
-            `http://localhost:8000/track-order/${orderId}`,
+            `https://alhayat-ai-restaurant-backend.onrender.com/track-order/${orderId}`,
             {
                 method: "GET",
                 headers: {
@@ -1016,7 +1016,7 @@ async function askAI() {
 
     try {
         const response = await fetch(
-            "http://localhost:8000/ai-chat",
+            "https://alhayat-ai-restaurant-backend.onrender.com/ai-chat",
             {
                 method: "POST",
                 headers: {
@@ -1226,7 +1226,7 @@ function setupJobApplicationForm() {
 
         try {
             const response = await fetch(
-                "http://localhost:8000/job-application",
+            "https://alhayat-ai-restaurant-backend.onrender.com/job-application",
                 {
                     method: "POST",
                     body: new FormData(jobForm)
@@ -1316,7 +1316,7 @@ async function showDemoPayment(orderId) {
 
     try {
         const response = await fetch(
-            "http://localhost:8000/demo-payment",
+            "https://alhayat-ai-restaurant-backend.onrender.com/demo-payment",
             {
                 method: "POST",
                 headers: {
