@@ -1685,6 +1685,65 @@ select {
 
 @media (max-width: 768px) {
 
+    .ai-assistant-section {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        pointer-events: none;
+    }
+
+    .ai-toggle-button {
+        right: 14px;
+        bottom: 84px;
+        pointer-events: auto;
+        min-height: 48px;
+        padding: 6px 12px 6px 7px;
+        font-size: 14px;
+    }
+
+    .ai-assistant-section.ai-open {
+        top: 8px;
+        right: 8px;
+        bottom: 8px;
+        left: 8px;
+        width: auto;
+        height: auto;
+        min-height: 0;
+        padding: 10px;
+        align-items: stretch;
+        overflow: hidden;
+        pointer-events: auto;
+    }
+
+    .ai-assistant-section.ai-open .ai-3d-card {
+        width: 100%;
+        max-width: none;
+        max-height: 100%;
+        min-height: 0;
+        padding: 18px 14px;
+        border-radius: 18px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .ai-close-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        margin: 0;
+        width: 36px;
+        height: 36px;
+        z-index: 10;
+    }
+
+    .ai-assistant-section.ai-open .ai-floating-icon {
+        top: -8px;
+        right: 58px;
+        width: 56px;
+        height: 56px;
+        font-size: 25px;
+    }
+
     .ai-3d-card {
         padding: 22px;
         border-radius: 22px;
