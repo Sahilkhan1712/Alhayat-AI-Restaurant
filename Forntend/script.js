@@ -1297,6 +1297,12 @@ function toggleAIAssistant() {
     document.getElementById("aiAssistantSection")?.classList.toggle("ai-open");
 }
 
+// Always start the assistant collapsed on a fresh page load, including mobile
+// browsers restoring the page from their back-forward cache.
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("aiAssistantSection")?.classList.remove("ai-open");
+});
+
 
 async function showDemoPayment(orderId) {
     const choice = confirm(
