@@ -301,7 +301,7 @@ async function loadMyOrders() {
 
         // Get only this user's orders
         const response = await fetch(
-            `https://alhayat-ai-restaurant-backend.onrender.com/my-orders/${userId}`,
+            `http://localhost:8000/my-orders/${userId}`,
             {
                 method: "GET",
                 headers: {
@@ -463,7 +463,7 @@ async function submitReview(orderId) {
         document.getElementById(`review-${orderId}`).value;
 
     const response = await fetch(
-        "https://alhayat-ai-restaurant-backend.onrender.com/add-review",
+        "http://localhost:8000/add-review",
         {
             method: "POST",
             headers: {

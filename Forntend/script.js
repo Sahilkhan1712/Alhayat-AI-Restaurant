@@ -3,7 +3,7 @@ let discount = 0;
 
 
 const socket = typeof io !== "undefined"
-    ? io("https://alhayat-ai-restaurant-backend.onrender.com")
+    ? io("http://localhost:8000")
     : null;
 
 
@@ -36,6 +36,7 @@ function updateFloatingCartCount() {
 // ==========================================
 
 function addToCart(itemName, itemPrice) {
+
 
     const name = String(itemName).trim();
     const price = Number(itemPrice);
@@ -132,6 +133,7 @@ function addToCart(itemName, itemPrice) {
 
     renderCart();
 
+
 }
 
 // function addToCart(itemName) {
@@ -224,6 +226,33 @@ function increaseQty(name) {
     renderCart();
 }
 
+function showStepLoader(label) {
+    const loader = document.getElementById("stepLoader");
+    if (!loader) return;
+    const text = loader.querySelector(".step-loader-text");
+    if (text) text.textContent = label;
+    loader.classList.add("is-visible");
+    loader.setAttribute("aria-hidden", "false");
+}
+
+function hideStepLoader() {
+    const loader = document.getElementById("stepLoader");
+    if (!loader) return;
+    loader.classList.remove("is-visible");
+    loader.setAttribute("aria-hidden", "true");
+}
+
+// Category navigation: show only the matching menu cards and keep the existing design.
+function filterMenu(category, button) {
+    document.querySelectorAll(".category-btn").forEach((item) => item.classList.remove("active"));
+    if (button) button.classList.add("active");
+    document.querySelectorAll("#foodGrid .food-card").forEach((card) => {
+        const visible = category === "all" || card.dataset.category === category;
+        card.hidden = !visible;
+        card.setAttribute("aria-hidden", String(!visible));
+    });
+}
+
 
 function decreaseQty(name) {
     const item = cart.find(i => i.name === name);
@@ -253,7 +282,7 @@ function updateCheckoutSummary() {
 
     });
 
-    const deliveryCharge = 40;
+    const deliveryCharge = 0;
 
     const currentDiscount = Number(discount || 0);
 
@@ -329,7 +358,7 @@ function updateCheckoutSummary() {
     });
 
     // Delivery charge
-    const deliveryCharge = 40;
+    const deliveryCharge = 0;
 
     // Current discount
     const currentDiscount = Number(discount || 0);
@@ -419,25 +448,17 @@ async function placeOrder() {
     if (payButton) payButton.disabled = true;
 
     try {
-        // STEP 1: Show demo payment processing and success screen.
-        // This is only a simulation, NOT a real payment.
-        const paymentSuccess = await showPaymentSuccessScreen();
-
-        if (!paymentSuccess) return;
-
-        // STEP 2: Only after the simulated success, create the order.
         const orderData = {
             customer: user.name,
             phone: user.phone,
             userId: user.id,
             address: addressElement.value.trim(),
             cart: cart,
-            paymentMethod: paymentElement.innerText.trim(),
-            paymentStatus: "Paid (Demo)"
+            paymentMethod: paymentElement.innerText.trim()
         };
 
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/place-order",
+            "http://localhost:8000/place-order",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -451,6 +472,10 @@ async function placeOrder() {
             throw new Error(data.message || "Order could not be placed.");
         }
 
+        if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+            return;
+        }
         if (typeof notificationSound !== "undefined" && notificationSound) {
             notificationSound.play().catch(() => { });
         }
@@ -515,7 +540,7 @@ async function reserveTable() {
 
     const response =
         await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/reserve-table",
+            "http://localhost:8000/reserve-table",
             {
                 method: "POST",
 
@@ -598,7 +623,7 @@ async function trackOrder() {
     try {
 
         const response = await fetch(
-            `https://alhayat-ai-restaurant-backend.onrender.com/track-order/${orderId}`,
+            `http://localhost:8000/track-order/${orderId}`,
             {
                 method: "GET",
                 headers: {
@@ -863,6 +888,83 @@ function applyCoupon() {
 // ==========================================
 
 let aiChatHistory = [];
+let voiceRecognition = null;
+let aiVoiceEnabled = false;
+
+function toggleAIReadAloud() {
+    aiVoiceEnabled = !aiVoiceEnabled;
+    const button = document.getElementById("aiVoiceToggle");
+    if (button) {
+        button.textContent = aiVoiceEnabled ? "🔊" : "🔇";
+        button.setAttribute("aria-label", aiVoiceEnabled ? "Disable AI voice replies" : "Enable AI voice replies");
+    }
+    if (!aiVoiceEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function speakAIResponse(text, sourceText = "") {
+    if (!aiVoiceEnabled) return;
+    if (!window.speechSynthesis || !text) return;
+    window.speechSynthesis.cancel();
+    const spokenText = String(text)
+        .replace(/[*_#`]/g, "")
+        .replace(/https?:\/\/\S+/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    const utterance = new SpeechSynthesisUtterance(spokenText);
+    const isHindi = /[\u0900-\u097F]/.test(sourceText);
+    utterance.lang = isHindi ? "hi-IN" : "en-US";
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = isHindi
+        ? voices.find((voice) => /^hi-IN/i.test(voice.lang) && /female|lekha|heera|kalpana/i.test(voice.name)) || voices.find((voice) => /^hi-IN/i.test(voice.lang))
+        : voices.find((voice) => /^en-US/i.test(voice.lang) && /female|samantha|ava|allison|victoria|karen/i.test(voice.name)) || voices.find((voice) => /^en-US/i.test(voice.lang));
+    if (preferred) utterance.voice = preferred;
+    utterance.rate = isHindi ? 0.9 : 0.95;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    // Speaking one short chunk at a time avoids Chrome TTS pausing on long AI replies.
+    const chunks = spokenText.match(/[^.!?।]+[.!?।]?/g) || [spokenText];
+    chunks.slice(0, 8).forEach((chunk) => {
+        const part = new SpeechSynthesisUtterance(chunk.trim());
+        part.lang = utterance.lang;
+        part.voice = utterance.voice;
+        part.rate = utterance.rate;
+        part.pitch = utterance.pitch;
+        part.volume = utterance.volume;
+        window.speechSynthesis.speak(part);
+    });
+}
+
+if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
+function toggleVoiceInput() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const input = document.getElementById("chatInput");
+    const mic = document.querySelector(".ai-mic-btn");
+    if (!SpeechRecognition || !input) {
+        alert("Voice input is not supported in this browser. Chrome ke latest version me try karein.");
+        return;
+    }
+    if (voiceRecognition) {
+        voiceRecognition.stop();
+        voiceRecognition = null;
+        if (mic) mic.classList.remove("is-listening");
+        return;
+    }
+    voiceRecognition = new SpeechRecognition();
+    voiceRecognition.lang = "hi-IN";
+    voiceRecognition.interimResults = true;
+    voiceRecognition.continuous = false;
+    if (mic) mic.classList.add("is-listening");
+    voiceRecognition.onresult = (event) => {
+        const transcript = [...event.results].map((result) => result[0].transcript).join("");
+        input.value = transcript;
+        const latest = event.results[event.results.length - 1];
+        if (latest?.isFinal) askAI();
+    };
+    voiceRecognition.onerror = () => { if (mic) mic.classList.remove("is-listening"); voiceRecognition = null; };
+    voiceRecognition.onend = () => { if (mic) mic.classList.remove("is-listening"); voiceRecognition = null; };
+    voiceRecognition.start();
+}
 
 async function askAI() {
     const input = document.getElementById("chatInput");
@@ -872,6 +974,25 @@ async function askAI() {
 
     const message = input.value.trim();
     if (!message) return;
+
+    const lowerMessage = message.toLowerCase();
+    const cards = [...document.querySelectorAll("#foodGrid .food-card")];
+    const aliases = { "गुलाब जामुन":"Gulab Jamun", gulab:"Gulab Jamun", "मटन बिरयानी":"Mutton Biryani", "पनीर टिक्का पिज़्ज़ा":"Paneer Tikka Pizza", "पनीर टिक्का पिज्जा":"Paneer Tikka Pizza", "एट द पनीर":"Paneer Tikka Pizza", "एड द पनीर":"Paneer Tikka Pizza", "बीबीक्यू चिकन पिज़्ज़ा":"BBQ Chicken Pizza", "बीबी चिकन पिज़्ज़ा":"BBQ Chicken Pizza", "बटर चिकन":"Butter Chicken", "कढ़ाई पनीर":"Kadhai Paneer", "कड़ाई पनीर":"Kadhai Paneer", "एट कड़ाई पनीर":"Kadhai Paneer", "डबल चीज़ बर्गर":"Double Cheese Burger", "डबल चीज बर्गर":"Double Cheese Burger", "ए डबल चीज बर्गर":"Double Cheese Burger", "दाल मखनी":"Dal Makhani", "चिली पनीर":"Chilli Paneer", "हक्का नूडल्स":"Hakka Noodles", "शेज़वान नूडल्स":"Schezwan Noodles", "वेज फ्राइड राइस":"Veg Fried Rice", "पनीर टिक्का":"Paneer Tikka", "चिकन टिक्का":"Chicken Tikka", "अल्फ्रेडो पास्ता":"Creamy Alfredo Pasta", "अर्राबियाता पास्ता":"Arrabbiata Pasta", "चिकन पास्ता":"Chicken Pasta", "पनीर रोल":"Paneer Kathi Roll", "चिकन शावरमा":"Chicken Shawarma", "फ्रेंच फ्राइज":"Classic French Fries", "पेरी पेरी फ्राइज":"Peri Peri Fries", "चॉकलेट ब्राउनी":"Chocolate Brownie", "गुलाबजामुन":"Gulab Jamun", "चीज़केक":"New York Cheesecake", "कोल्ड कॉफी":"Cold Coffee", "लाइम मोजिटो":"Fresh Lime Mojito", "मैंगो लस्सी":"Mango Lassi", "नूडल्स":"Hakka Noodles", "कॉफी":"Cold Coffee", "फ्राइज":"Classic French Fries", burger:"Classic Veg Burger", pizza:"Margherita Pizza", biryani:"Mutton Biryani", noodles:"Hakka Noodles", coffee:"Cold Coffee", fries:"Classic French Fries" };
+    const requestedName = Object.entries(aliases).find(([alias]) => lowerMessage.includes(alias))?.[1];
+    const menuCard = cards.find((card) => lowerMessage.includes((card.dataset.name || "").toLowerCase())) || cards.find((card) => requestedName && card.dataset.name === requestedName);
+    if (menuCard && /add|order|cart|chahiye|do|एड|ऐड|एट|जोड़|करो|चाहिए|दिया|डाल/.test(lowerMessage)) {
+        const addButton = menuCard.querySelector("button");
+        const price = Number((menuCard.querySelector("strong")?.textContent || "").replace(/[^0-9.]/g, ""));
+        if (price && typeof addToCart === "function") addToCart(menuCard.dataset.name, price);
+        const cartReply = `${menuCard.dataset.name} cart me add kar diya. My Cart se checkout continue kar sakte hain.`;
+        responseBox.innerHTML += `<div class="ai-bot-message"><div class="ai-bot-avatar">🤖</div><div class="ai-bot-content"><strong>AlHayat AI</strong><p>${escapeAIHTML(cartReply)}</p></div></div>`;
+        speakAIResponse(cartReply, message);
+        return;
+    }
+    if (/career|job|join team|naukri|करियर|कैरियर|जॉब|नौकरी|टीम में शामिल/.test(lowerMessage)) { toggleAIAssistant(); openFooterSection("join-team"); return; }
+    if (/book|table|reservation|reserve|sheet|seat|बुक|टेबल|सीट/.test(lowerMessage)) { toggleAIAssistant(); openFooterSection("reservation"); return; }
+    if (/track|track my order|order status|मेरा ऑर्डर|ऑर्डर ट्रैक|ट्रैक/.test(lowerMessage)) { toggleAIAssistant(); openFooterSection("track-order"); return; }
+    if (/cart|checkout|pay|place order|order place|ऑर्डर प्लेस|ऑर्डर कर/.test(lowerMessage)) { toggleAIAssistant(); openCartSection(); return; }
 
     responseBox.innerHTML += `
         <div class="ai-user-message">
@@ -895,7 +1016,7 @@ async function askAI() {
 
     try {
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/ai-chat",
+            "http://localhost:8000/ai-chat",
             {
                 method: "POST",
                 headers: {
@@ -934,6 +1055,8 @@ async function askAI() {
                 </div>
             </div>
         `;
+
+        speakAIResponse(data.reply, message);
 
         responseBox.scrollTop = responseBox.scrollHeight;
     } catch (error) {
@@ -1044,7 +1167,22 @@ function selectPayment(method, icon, description) {
 
     if (options) options.classList.remove("open");
     if (arrow) arrow.style.transform = "rotate(0deg)";
+    focusPayNowWhenReady();
 }
+
+function focusPayNowWhenReady() {
+    const address = document.getElementById("orderAddress");
+    const payment = document.getElementById("selectedPaymentName");
+    const payNow = document.querySelector(".place-order-btn");
+    if (!address || !payment || !payNow) return;
+    if (address.value.trim() && payment.innerText.trim() !== "Choose Payment Method") {
+        window.setTimeout(() => payNow.scrollIntoView({ behavior: "smooth", block: "center" }), 250);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("orderAddress")?.addEventListener("input", focusPayNowWhenReady);
+});
 
 function toggleMobileMenu() {
     document.getElementById("navbarLinks")
@@ -1088,7 +1226,7 @@ function setupJobApplicationForm() {
 
         try {
             const response = await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/job-application",
+                "http://localhost:8000/job-application",
                 {
                     method: "POST",
                     body: new FormData(jobForm)
@@ -1132,19 +1270,31 @@ function openCartSection() {
     const checkout = document.getElementById("premiumCheckout");
     const cartItems = document.getElementById("cartItems");
 
-    if (checkout) {
-        checkout.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    } else if (cartItems) {
-        cartItems.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    } else {
-        alert("Cart section nahi mila!");
-    }
+    showStepLoader("Opening checkout…");
+    window.setTimeout(() => {
+        hideStepLoader();
+        if (checkout) {
+            checkout.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else if (cartItems) {
+            cartItems.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, 500);
+    return;
+
+}
+
+function openFooterSection(id) {
+    const section = document.getElementById(id);
+    if (!section) return;
+    document.querySelectorAll(".footer-collapsed-section.footer-section-open").forEach((openSection) => {
+        if (openSection !== section) openSection.classList.remove("footer-section-open");
+    });
+    section.classList.add("footer-section-open");
+    window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+}
+
+function toggleAIAssistant() {
+    document.getElementById("aiAssistantSection")?.classList.toggle("ai-open");
 }
 
 
@@ -1337,3 +1487,32 @@ async function placeOrderAfterDemoPayment() {
 }
 
 
+// Gentle food showcase for guests: no login or interaction is required.
+(() => {
+    const hero = document.querySelector('.food-hero');
+    if (!hero) return;
+    const foodScenes = [
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
+        'https://images.unsplash.com/photo-1568901346375-23c9450c58cd',
+        'https://images.unsplash.com/photo-1555939594-58d7cb561ad1',
+        'https://images.unsplash.com/photo-1563379091339-03246963d51a',
+        'https://images.unsplash.com/photo-1547592180-85f173990554',
+        'https://images.unsplash.com/photo-1540420773420-3366772f4999',
+        'https://images.unsplash.com/photo-1551024601-bec78aea704b',
+        'https://images.unsplash.com/photo-1544145945-f90425340c7e'
+    ];
+    const loadedScenes = [];
+    foodScenes.forEach(src => {
+        const image = new Image();
+        image.onload = () => loadedScenes.push(src);
+        image.src = `${src}?auto=format&fit=crop&w=1800&q=82`;
+    });
+    let index = 0;
+    const rotate = () => {
+        if (!loadedScenes.length) return;
+        index = (index + 1) % loadedScenes.length;
+        hero.style.backgroundImage = `url("${loadedScenes[index]}?auto=format&fit=crop&w=1800&q=82"), url("assets/alhayat-ai-hero.png")`;
+    };
+    window.setInterval(rotate, 3000);
+})();

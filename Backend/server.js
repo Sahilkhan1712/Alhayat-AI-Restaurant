@@ -424,26 +424,41 @@ ${menuText}
 // ===============================
 
 app.post("/place-order", async (req, res) => {
-
-    console.log("Order Received:", req.body);
-
     try {
-
-        const newOrder = new Order(req.body);
-
-        await newOrder.save();
-
-        res.json({
-
-            success: true,
-
-            message: "Order saved successfully",
-
-            orderId: newOrder._id
-
+        const { customer, phone, userId, address, cart, paymentMethod } = req.body;
+        if (!customer || !address || !Array.isArray(cart) || cart.length === 0) {
+            return res.status(400).json({ success: false, message: "Customer, address and cart are required." });
+        }
+        const verifiedCart = cart.map((item) => {
+            const menuItem = restaurantMenu.find((menu) => menu.name === item.name);
+            const qty = Number(item.qty);
+            if (!menuItem || !Number.isInteger(qty) || qty < 1 || qty > 50) {
+                throw new Error("Invalid cart item.");
+            }
+            return { name: menuItem.name, price: menuItem.price, qty };
         });
+        const totalPaise = verifiedCart.reduce((sum, item) => sum + item.price * item.qty * 100, 0);
+        const method = String(paymentMethod || "").trim();
+        if (!method) return res.status(400).json({ success: false, message: "Payment method is required." });
+        const newOrder = await new Order({ customer, phone, userId, address, cart: verifiedCart, paymentMethod: method, paymentStatus: method === "COD" ? "Pending" : "Pending", totalPaise }).save();
 
+        if (method !== "COD") {
+            const gatewayResponse = await fetch(`${process.env.YOUPI_API_URL || "http://localhost:6100"}/api/v1/payments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Idempotency-Key": `alhayat-${newOrder._id}` },
+                body: JSON.stringify({ orderId: String(newOrder._id), amount: totalPaise / 100, currency: "INR", method: "UPI", description: "AlHayat AI Restaurant order", returnUrl: `${process.env.FRONTEND_URL || "http://localhost:5500"}/payment-return.html?orderId=${newOrder._id}` })
+            });
+            const gateway = await gatewayResponse.json().catch(() => ({}));
+            if (!gatewayResponse.ok || !gateway.paymentId || !gateway.checkoutUrl) {
+                await Order.findByIdAndUpdate(newOrder._id, { paymentStatus: "Failed" });
+                return res.status(502).json({ success: false, message: gateway.error || "Payment session could not be created." });
+            }
+            await Order.findByIdAndUpdate(newOrder._id, { paymentId: gateway.paymentId });
+            return res.status(201).json({ success: true, orderId: newOrder._id, paymentId: gateway.paymentId, checkoutUrl: gateway.checkoutUrl, total: totalPaise / 100 });
+        }
+        return res.status(201).json({ success: true, orderId: newOrder._id, total: totalPaise / 100 });
     } catch (error) {
+        if (error.message === "Invalid cart item.") return res.status(400).json({ success: false, message: error.message });
 
         console.log(error);
 
@@ -457,6 +472,34 @@ app.post("/place-order", async (req, res) => {
 
     }
 
+});
+
+// Payment return verification: browser parameters are never trusted as proof.
+app.get("/payments/verify/:orderId", async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.orderId);
+        if (!order || !order.paymentId) return res.status(404).json({ success: false, message: "Payment order not found." });
+        const gatewayBase = process.env.YOUPI_API_URL || "http://localhost:6100";
+        let response = await fetch(`${gatewayBase}/api/v1/payments/${encodeURIComponent(order.paymentId)}`);
+        let payment = await response.json().catch(() => ({}));
+        // A retried checkout can leave an older terminal session on the order record.
+        // Reconcile by merchant order ID, then retain only a fully matching session.
+        if (!response.ok || ["FAILED", "EXPIRED", "CANCELLED"].includes(payment.status)) {
+            const latestResponse = await fetch(`${gatewayBase}/api/v1/orders/${encodeURIComponent(String(order._id))}/cod`);
+            const latest = await latestResponse.json().catch(() => ({}));
+            if (latestResponse.ok && latest.paymentId) {
+                response = latestResponse;
+                payment = latest;
+                if (latest.paymentId !== order.paymentId) await Order.findByIdAndUpdate(order._id, { paymentId: latest.paymentId });
+            }
+        }
+        const expectedAmount = String(order.totalPaise);
+        const verified = response.ok && payment.paymentId === order.paymentId && payment.orderId === String(order._id) && String(payment.amountPaise) === expectedAmount && String(payment.currency).toUpperCase() === "INR" && payment.status === "SUCCESS";
+        if (verified && order.paymentStatus !== "Paid") await Order.findOneAndUpdate({ _id: order._id, paymentStatus: { $ne: "Paid" } }, { paymentStatus: "Paid" });
+        return res.json({ success: verified, orderId: order._id, paymentStatus: verified ? "Paid" : order.paymentStatus, status: payment.status || "UNVERIFIED" });
+    } catch (error) {
+        return res.status(502).json({ success: false, message: "Payment verification unavailable." });
+    }
 });
 
 

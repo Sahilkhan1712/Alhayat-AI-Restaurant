@@ -15,7 +15,7 @@ async function login() {
     try {
 
         const res = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/auth/login",
+            "http://localhost:8000/auth/login",
             {
                 method: "POST",
 
@@ -99,7 +99,7 @@ async function handleGoogleLogin(response) {
     try {
 
         const res = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/auth/google",
+            "http://localhost:8000/auth/google",
             {
                 method: "POST",
 

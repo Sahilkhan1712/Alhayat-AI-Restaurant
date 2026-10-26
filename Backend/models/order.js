@@ -15,6 +15,15 @@ paymentStatus: {
     type: String,
     default: "Pending"
 },
+paymentId: {
+    type: String,
+    default: null,
+    index: true
+},
+totalPaise: {
+    type: Number,
+    default: 0
+},
     status: {
         type: String,
         default: "Pending"

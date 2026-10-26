@@ -35,7 +35,7 @@ if (
 // SOCKET.IO
 // ==========================================
 
-const socket = io("https://alhayat-ai-restaurant-backend.onrender.com");
+const socket = io("http://localhost:8000");
 
 console.log("Admin Panel Loaded");
 
@@ -73,7 +73,7 @@ async function loadOrders() {
     try {
 
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/orders",
+            "http://localhost:8000/orders",
             {
                 method: "GET",
                 headers: authHeaders()
@@ -752,7 +752,7 @@ async function updateStatus(
 
         const response =
             await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/update-status",
+                "http://localhost:8000/update-status",
                 {
 
                     method: "POST",
@@ -830,7 +830,7 @@ async function deleteOrder(
 
         const response =
             await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/delete-order",
+                "http://localhost:8000/delete-order",
                 {
 
                     method: "POST",
@@ -886,7 +886,7 @@ async function updatePaymentStatus(
 
         const response =
             await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/update-payment",
+                "http://localhost:8000/update-payment",
                 {
 
                     method: "POST",
@@ -967,7 +967,7 @@ async function loadReservations() {
 
         const response =
             await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/reservations",
+                "http://localhost:8000/reservations",
                 {
 
                     method: "GET",
@@ -1141,7 +1141,7 @@ async function updateReservationStatus(
 
         const response =
             await fetch(
-                "https://alhayat-ai-restaurant-backend.onrender.com/update-reservation-status",
+                "http://localhost:8000/update-reservation-status",
                 {
 
                     method: "POST",
@@ -1246,7 +1246,7 @@ async function loadJobApplications() {
     try {
 
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/job-applications",
+            "http://localhost:8000/job-applications",
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -1370,7 +1370,7 @@ async function updateJobApplicationStatus(
     try {
 
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/update-job-application-status",
+            "http://localhost:8000/update-job-application-status",
             {
                 method: "POST",
 
@@ -1446,7 +1446,7 @@ async function downloadJobApplicationCV(applicationId) {
     try {
 
         const response = await fetch(
-            `https://alhayat-ai-restaurant-backend.onrender.com/job-application/${applicationId}/cv`,
+            `http://localhost:8000/job-application/${applicationId}/cv`,
             {
                 method: "GET",
                 headers: {
