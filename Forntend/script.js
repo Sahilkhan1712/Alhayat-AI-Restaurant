@@ -1362,6 +1362,7 @@ async function showDemoPayment(orderId) {
 
 
 async function startDemoPayment() {
+    try {
     const paymentElement = document.getElementById("selectedPaymentName");
 
     if (
@@ -1373,7 +1374,8 @@ async function startDemoPayment() {
         return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    let user;
+    try { user = JSON.parse(localStorage.getItem("user") || "null"); } catch (_) { user = null; }
     const address = document.getElementById("orderAddress")?.value.trim();
     if (!user || !address || !cart.length) {
         alert("Please login, enter address and add items first.");
@@ -1437,6 +1439,10 @@ async function startDemoPayment() {
     if (!response.ok || !result.success) { alert(result.message || "Test order failed"); return; }
     alert("✅ Payment Successful\n\nTest payment complete. No money was charged.\nOrder status: Test Paid");
     cart = []; localStorage.removeItem("cart"); updateFloatingCartCount(); renderCart();
+    } catch (error) {
+        console.error("Test payment error:", error);
+        alert("Test payment could not start. Please login, add an item and fill the address.");
+    }
 }
 
 
