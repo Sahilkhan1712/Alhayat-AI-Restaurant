@@ -1373,6 +1373,14 @@ async function startDemoPayment() {
         return;
     }
 
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const address = document.getElementById("orderAddress")?.value.trim();
+    if (!user || !address || !cart.length) {
+        alert("Please login, enter address and add items first.");
+        return;
+    }
+    const otp = prompt("TEST PAYMENT OTP (use 123456)");
+    if (otp !== "123456") { alert("Invalid test OTP."); return; }
     const paymentBox = document.createElement("div");
     paymentBox.id = "demoPaymentScreen";
 
@@ -1400,7 +1408,7 @@ async function startDemoPayment() {
                 Please wait, do not close this screen.
             </p>
             <div style="color:#15803d;font-weight:bold;">
-                ALHAYAT DEMO PAYMENT
+                ALHAYAT TEST ENVIRONMENT
             </div>
         </div>
     `;
@@ -1421,8 +1429,14 @@ async function startDemoPayment() {
 
     paymentBox.remove();
 
-    // Continue to the order placement function
-    await placeOrderAfterDemoPayment();
+    const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/test-order", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer: user.name, phone: user.phone, userId: user.id, address, cart })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) { alert(result.message || "Test order failed"); return; }
+    alert("✅ Payment Successful\n\nTest payment complete. No money was charged.\nOrder status: Test Paid");
+    cart = []; localStorage.removeItem("cart"); updateFloatingCartCount(); renderCart();
 }
 
 

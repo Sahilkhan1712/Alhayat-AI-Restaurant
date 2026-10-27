@@ -512,6 +512,27 @@ app.get("/payments/verify/:orderId", async (req, res) => {
     }
 });
 
+// Explicit sandbox order flow for demonstrations. Never treated as a real payment.
+app.post("/test-order", async (req, res) => {
+    try {
+        const { customer, phone, userId, address, cart } = req.body;
+        if (!customer || !address || !Array.isArray(cart) || cart.length === 0) {
+            return res.status(400).json({ success: false, message: "Customer, address and cart are required." });
+        }
+        const verifiedCart = cart.map((item) => {
+            const menuItem = restaurantMenu.find((menu) => menu.name === item.name);
+            const qty = Number(item.qty);
+            if (!menuItem || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new Error("Invalid cart item.");
+            return { name: menuItem.name, price: menuItem.price, qty };
+        });
+        const totalPaise = verifiedCart.reduce((sum, item) => sum + item.price * item.qty * 100, 0);
+        const order = await new Order({ customer, phone, userId, address, cart: verifiedCart, paymentMethod: "TEST_PAYMENT", paymentStatus: "Test Paid", totalPaise }).save();
+        return res.status(201).json({ success: true, test: true, orderId: order._id, paymentStatus: "Test Paid", total: totalPaise / 100 });
+    } catch (error) {
+        return res.status(400).json({ success: false, message: error.message === "Invalid cart item." ? error.message : "Test order could not be created." });
+    }
+});
+
 
 // ===============================
 // GET ALL ORDERS
