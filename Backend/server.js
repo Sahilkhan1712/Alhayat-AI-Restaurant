@@ -446,11 +446,18 @@ app.post("/place-order", async (req, res) => {
         const newOrder = await new Order({ customer, phone, userId, address, cart: verifiedCart, paymentMethod: method, paymentStatus: method === "COD" ? "Pending" : "Pending", totalPaise }).save();
 
         if (method !== "COD") {
-            const gatewayResponse = await fetch(`${youpiApiUrl}/api/v1/payments`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Idempotency-Key": `alhayat-${newOrder._id}` },
-                body: JSON.stringify({ orderId: String(newOrder._id), amount: totalPaise / 100, currency: "INR", method: "UPI", description: "AlHayat AI Restaurant order", returnUrl: `${frontendUrl}/payment-return.html?orderId=${newOrder._id}` })
-            });
+            let gatewayResponse;
+            try {
+                gatewayResponse = await fetch(`${youpiApiUrl}/api/v1/payments`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Idempotency-Key": `alhayat-${newOrder._id}` },
+                    body: JSON.stringify({ orderId: String(newOrder._id), amount: totalPaise / 100, currency: "INR", method: "UPI", description: "AlHayat AI Restaurant order", returnUrl: `${frontendUrl}/payment-return.html?orderId=${newOrder._id}` })
+                });
+            } catch (gatewayError) {
+                await Order.findByIdAndUpdate(newOrder._id, { paymentStatus: "Failed" });
+                console.error("YOUPI payment gateway unavailable:", gatewayError.message);
+                return res.status(502).json({ success: false, message: "Payment gateway unavailable. Configure YOUPI_API_URL to a reachable YOUPI API." });
+            }
             const gateway = await gatewayResponse.json().catch(() => ({}));
             if (!gatewayResponse.ok || !gateway.paymentId || !gateway.checkoutUrl) {
                 await Order.findByIdAndUpdate(newOrder._id, { paymentStatus: "Failed" });
