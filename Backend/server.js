@@ -423,6 +423,9 @@ ${menuText}
 // PLACE ORDER
 // ===============================
 
+const youpiApiUrl = String(process.env.YOUPI_API_URL || "http://localhost:6100").replace(/\/$/, "");
+const frontendUrl = String(process.env.FRONTEND_URL || "http://localhost:5500").replace(/\/$/, "");
+
 app.post("/place-order", async (req, res) => {
     try {
         const { customer, phone, userId, address, cart, paymentMethod } = req.body;
@@ -443,15 +446,15 @@ app.post("/place-order", async (req, res) => {
         const newOrder = await new Order({ customer, phone, userId, address, cart: verifiedCart, paymentMethod: method, paymentStatus: method === "COD" ? "Pending" : "Pending", totalPaise }).save();
 
         if (method !== "COD") {
-            const gatewayResponse = await fetch(`${process.env.YOUPI_API_URL || "http://localhost:6100"}/api/v1/payments`, {
+            const gatewayResponse = await fetch(`${youpiApiUrl}/api/v1/payments`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Idempotency-Key": `alhayat-${newOrder._id}` },
-                body: JSON.stringify({ orderId: String(newOrder._id), amount: totalPaise / 100, currency: "INR", method: "UPI", description: "AlHayat AI Restaurant order", returnUrl: `${process.env.FRONTEND_URL || "http://localhost:5500"}/payment-return.html?orderId=${newOrder._id}` })
+                body: JSON.stringify({ orderId: String(newOrder._id), amount: totalPaise / 100, currency: "INR", method: "UPI", description: "AlHayat AI Restaurant order", returnUrl: `${frontendUrl}/payment-return.html?orderId=${newOrder._id}` })
             });
             const gateway = await gatewayResponse.json().catch(() => ({}));
             if (!gatewayResponse.ok || !gateway.paymentId || !gateway.checkoutUrl) {
                 await Order.findByIdAndUpdate(newOrder._id, { paymentStatus: "Failed" });
-                return res.status(502).json({ success: false, message: gateway.error || "Payment session could not be created." });
+                return res.status(502).json({ success: false, message: gateway.error || "Payment session could not be created. Check YOUPI_API_URL and gateway health." });
             }
             await Order.findByIdAndUpdate(newOrder._id, { paymentId: gateway.paymentId });
             return res.status(201).json({ success: true, orderId: newOrder._id, paymentId: gateway.paymentId, checkoutUrl: gateway.checkoutUrl, total: totalPaise / 100 });
@@ -479,13 +482,12 @@ app.get("/payments/verify/:orderId", async (req, res) => {
     try {
         const order = await Order.findById(req.params.orderId);
         if (!order || !order.paymentId) return res.status(404).json({ success: false, message: "Payment order not found." });
-        const gatewayBase = process.env.YOUPI_API_URL || "http://localhost:6100";
-        let response = await fetch(`${gatewayBase}/api/v1/payments/${encodeURIComponent(order.paymentId)}`);
+        let response = await fetch(`${youpiApiUrl}/api/v1/payments/${encodeURIComponent(order.paymentId)}`);
         let payment = await response.json().catch(() => ({}));
         // A retried checkout can leave an older terminal session on the order record.
         // Reconcile by merchant order ID, then retain only a fully matching session.
         if (!response.ok || ["FAILED", "EXPIRED", "CANCELLED"].includes(payment.status)) {
-            const latestResponse = await fetch(`${gatewayBase}/api/v1/orders/${encodeURIComponent(String(order._id))}/cod`);
+            const latestResponse = await fetch(`${youpiApiUrl}/api/v1/orders/${encodeURIComponent(String(order._id))}/cod`);
             const latest = await latestResponse.json().catch(() => ({}));
             if (latestResponse.ok && latest.paymentId) {
                 response = latestResponse;
