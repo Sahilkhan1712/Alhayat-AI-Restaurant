@@ -266,6 +266,7 @@ const restaurantMenu = [
     { name: "Cold Coffee", price: 149, category: "Drinks", type: "Veg" },
     { name: "Fresh Lime Mojito", price: 129, category: "Drinks", type: "Veg" },
     { name: "Mango Lassi", price: 139, category: "Drinks", type: "Veg" }
+    ,{ name: "Special Salad", price: 249, category: "Salad", type: "Veg" }
 ];
 
 

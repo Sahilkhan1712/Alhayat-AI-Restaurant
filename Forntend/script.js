@@ -13,6 +13,16 @@ console.log("AI Restaurant Started");
 
 let recommendation = "";
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+// Migrate older recommendation labels so checkout always sends canonical menu names.
+const cartNameMigrations = {
+    "Biryani": "Mutton Biryani",
+    "Noodles": "Hakka Noodles",
+};
+cart = cart.map((item) => ({
+    ...item,
+    name: cartNameMigrations[item.name] || item.name,
+}));
+localStorage.setItem("cart", JSON.stringify(cart));
 
 
 
