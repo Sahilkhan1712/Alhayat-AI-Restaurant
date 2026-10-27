@@ -268,6 +268,7 @@ const restaurantMenu = [
     { name: "Mango Lassi", price: 139, category: "Drinks", type: "Veg" }
     ,{ name: "Special Salad", price: 249, category: "Salad", type: "Veg" }
 ];
+const legacyCartNames = { Biryani: "Mutton Biryani", Noodles: "Hakka Noodles" };
 
 
 // ===============================
@@ -434,7 +435,8 @@ app.post("/place-order", async (req, res) => {
             return res.status(400).json({ success: false, message: "Customer, address and cart are required." });
         }
         const verifiedCart = cart.map((item) => {
-            const menuItem = restaurantMenu.find((menu) => menu.name === item.name);
+            const canonicalName = legacyCartNames[String(item.name || "").trim()] || String(item.name || "").trim();
+            const menuItem = restaurantMenu.find((menu) => menu.name === canonicalName);
             const qty = Number(item.qty);
             if (!menuItem || !Number.isInteger(qty) || qty < 1 || qty > 50) {
                 throw new Error("Invalid cart item.");
@@ -520,7 +522,8 @@ app.post("/test-order", async (req, res) => {
             return res.status(400).json({ success: false, message: "Customer, address and cart are required." });
         }
         const verifiedCart = cart.map((item) => {
-            const menuItem = restaurantMenu.find((menu) => menu.name === item.name);
+            const canonicalName = legacyCartNames[String(item.name || "").trim()] || String(item.name || "").trim();
+            const menuItem = restaurantMenu.find((menu) => menu.name === canonicalName);
             const qty = Number(item.qty);
             if (!menuItem || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new Error("Invalid cart item.");
             return { name: menuItem.name, price: menuItem.price, qty };

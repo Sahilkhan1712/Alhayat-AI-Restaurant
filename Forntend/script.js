@@ -1441,7 +1441,7 @@ async function startDemoPayment() {
     cart = []; localStorage.removeItem("cart"); updateFloatingCartCount(); renderCart();
     } catch (error) {
         console.error("Test payment error:", error);
-        alert("Test payment could not start. Please login, add an item and fill the address.");
+        alert(`Test payment could not start: ${error.message || "unknown error"}`);
     }
 }
 
