@@ -14,8 +14,10 @@ async function login() {
 
     try {
 
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
+
         const res = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/auth/login",
+            `${apiBase}/auth/login`,
             {
                 method: "POST",
 
@@ -98,8 +100,10 @@ async function handleGoogleLogin(response) {
 
     try {
 
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
+
         const res = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/auth/google",
+            `${apiBase}/auth/google`,
             {
                 method: "POST",
 

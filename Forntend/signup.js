@@ -11,8 +11,8 @@ async function signup() {
     }
 
     try {
-
-        const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/auth/signup", {
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
+        const response = await fetch(`${apiBase}/auth/signup`, {
 
             method: "POST",
 

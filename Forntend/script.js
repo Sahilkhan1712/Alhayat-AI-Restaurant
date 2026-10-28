@@ -3,7 +3,7 @@ let discount = 0;
 
 
 const socket = typeof io !== "undefined"
-    ? io("https://alhayat-ai-restaurant-backend.onrender.com")
+    ? io((window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com")
     : null;
 
 
@@ -467,8 +467,9 @@ async function placeOrder() {
             paymentMethod: paymentElement.innerText.trim()
         };
 
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/place-order",
+            `${apiBase}/place-order`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -482,6 +483,28 @@ async function placeOrder() {
             throw new Error(data.message || "Order could not be placed.");
         }
 
+        if (data.razorpayOrderId) {
+            if (typeof Razorpay !== "function") throw new Error("Razorpay checkout could not load.");
+            const checkout = new Razorpay({
+                key: data.keyId, amount: data.amount, currency: data.currency,
+                name: "AlHayat AI Restaurant", description: "Restaurant order",
+                order_id: data.razorpayOrderId, prefill: { name: user.name, contact: user.phone },
+                handler: async (payment) => {
+                    try {
+                        const verify = await fetch(`${apiBase}/payments/verify`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ orderId: data.orderId, ...payment }) });
+                        const result = await verify.json();
+                        if (!verify.ok || !result.success) throw new Error(result.message || "Payment verification failed.");
+                        alert("✅ Payment Successful! Your order is confirmed.");
+                        cart = []; localStorage.removeItem("cart"); updateFloatingCartCount(); renderCart();
+                        window.location.href = "myorders.html";
+                    } catch (verificationError) { alert(`Payment verification failed: ${verificationError.message}`); }
+                },
+                modal: { ondismiss: () => { if (payButton) payButton.disabled = false; } }
+            });
+            checkout.on("payment.failed", () => alert("Payment failed. Order remains unpaid."));
+            checkout.open();
+            return;
+        }
         if (data.checkoutUrl) {
             window.location.href = data.checkoutUrl;
             return;
@@ -548,9 +571,10 @@ async function reserveTable() {
 
     }
 
+    const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
     const response =
         await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/reserve-table",
+            `${apiBase}/reserve-table`,
             {
                 method: "POST",
 
@@ -631,9 +655,9 @@ async function trackOrder() {
     }
 
     try {
-
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
         const response = await fetch(
-            `https://alhayat-ai-restaurant-backend.onrender.com/track-order/${orderId}`,
+            `${apiBase}/track-order/${orderId}`,
             {
                 method: "GET",
                 headers: {
@@ -986,15 +1010,19 @@ async function askAI() {
     if (!message) return;
 
     const lowerMessage = message.toLowerCase();
-    const cards = [...document.querySelectorAll("#foodGrid .food-card")];
+    // Search the complete rendered menu, not only the currently filtered category.
+    const cards = [...document.querySelectorAll(".food-card")];
     const aliases = { "गुलाब जामुन":"Gulab Jamun", gulab:"Gulab Jamun", "मटन बिरयानी":"Mutton Biryani", "पनीर टिक्का पिज़्ज़ा":"Paneer Tikka Pizza", "पनीर टिक्का पिज्जा":"Paneer Tikka Pizza", "एट द पनीर":"Paneer Tikka Pizza", "एड द पनीर":"Paneer Tikka Pizza", "बीबीक्यू चिकन पिज़्ज़ा":"BBQ Chicken Pizza", "बीबी चिकन पिज़्ज़ा":"BBQ Chicken Pizza", "बटर चिकन":"Butter Chicken", "कढ़ाई पनीर":"Kadhai Paneer", "कड़ाई पनीर":"Kadhai Paneer", "एट कड़ाई पनीर":"Kadhai Paneer", "डबल चीज़ बर्गर":"Double Cheese Burger", "डबल चीज बर्गर":"Double Cheese Burger", "ए डबल चीज बर्गर":"Double Cheese Burger", "दाल मखनी":"Dal Makhani", "चिली पनीर":"Chilli Paneer", "हक्का नूडल्स":"Hakka Noodles", "शेज़वान नूडल्स":"Schezwan Noodles", "वेज फ्राइड राइस":"Veg Fried Rice", "पनीर टिक्का":"Paneer Tikka", "चिकन टिक्का":"Chicken Tikka", "अल्फ्रेडो पास्ता":"Creamy Alfredo Pasta", "अर्राबियाता पास्ता":"Arrabbiata Pasta", "चिकन पास्ता":"Chicken Pasta", "पनीर रोल":"Paneer Kathi Roll", "चिकन शावरमा":"Chicken Shawarma", "फ्रेंच फ्राइज":"Classic French Fries", "पेरी पेरी फ्राइज":"Peri Peri Fries", "चॉकलेट ब्राउनी":"Chocolate Brownie", "गुलाबजामुन":"Gulab Jamun", "चीज़केक":"New York Cheesecake", "कोल्ड कॉफी":"Cold Coffee", "लाइम मोजिटो":"Fresh Lime Mojito", "मैंगो लस्सी":"Mango Lassi", "नूडल्स":"Hakka Noodles", "कॉफी":"Cold Coffee", "फ्राइज":"Classic French Fries", burger:"Classic Veg Burger", pizza:"Margherita Pizza", biryani:"Mutton Biryani", noodles:"Hakka Noodles", coffee:"Cold Coffee", fries:"Classic French Fries" };
     const requestedName = Object.entries(aliases).find(([alias]) => lowerMessage.includes(alias))?.[1];
     const menuCard = cards.find((card) => lowerMessage.includes((card.dataset.name || "").toLowerCase())) || cards.find((card) => requestedName && card.dataset.name === requestedName);
     if (menuCard && /add|order|cart|chahiye|do|एड|ऐड|एट|जोड़|करो|चाहिए|दिया|डाल/.test(lowerMessage)) {
         const addButton = menuCard.querySelector("button");
         const price = Number((menuCard.querySelector("strong")?.textContent || "").replace(/[^0-9.]/g, ""));
-        if (price && typeof addToCart === "function") addToCart(menuCard.dataset.name, price);
-        const cartReply = `${menuCard.dataset.name} cart me add kar diya. My Cart se checkout continue kar sakte hain.`;
+        const quantity = Math.max(1, Number((lowerMessage.match(/\b(\d+)\b/) || [])[1] || 1));
+        if (price && typeof addToCart === "function") {
+            for (let i = 0; i < quantity; i += 1) addToCart(menuCard.dataset.name, price);
+        }
+        const cartReply = `${quantity > 1 ? `${quantity} ` : ""}${menuCard.dataset.name} cart me add kar diya. My Cart se checkout continue kar sakte hain.`;
         responseBox.innerHTML += `<div class="ai-bot-message"><div class="ai-bot-avatar">🤖</div><div class="ai-bot-content"><strong>AlHayat AI</strong><p>${escapeAIHTML(cartReply)}</p></div></div>`;
         speakAIResponse(cartReply, message);
         return;
@@ -1025,8 +1053,9 @@ async function askAI() {
     responseBox.scrollTop = responseBox.scrollHeight;
 
     try {
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/ai-chat",
+            `${apiBase}/ai-chat`,
             {
                 method: "POST",
                 headers: {
@@ -1235,8 +1264,9 @@ function setupJobApplicationForm() {
         }
 
         try {
+            const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
             const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/job-application",
+                `${apiBase}/job-application`,
                 {
                     method: "POST",
                     body: new FormData(jobForm)
@@ -1325,8 +1355,9 @@ async function showDemoPayment(orderId) {
     const outcome = choice ? "success" : "failure";
 
     try {
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
         const response = await fetch(
-            "https://alhayat-ai-restaurant-backend.onrender.com/demo-payment",
+            `${apiBase}/demo-payment`,
             {
                 method: "POST",
                 headers: {
@@ -1431,7 +1462,8 @@ async function startDemoPayment() {
 
     paymentBox.remove();
 
-    const response = await fetch("https://alhayat-ai-restaurant-backend.onrender.com/test-order", {
+    const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
+    const response = await fetch(`${apiBase}/test-order`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer: user.name, phone: user.phone, userId: user.id, address, cart })
     });

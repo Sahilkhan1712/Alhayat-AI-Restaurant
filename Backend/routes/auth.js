@@ -315,7 +315,9 @@ router.post("/google", async (req, res) => {
                     hashedPassword,
 
                 role:
-                    "user"
+                    "user",
+
+                phone: ""
 
             });
 

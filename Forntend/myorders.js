@@ -297,11 +297,12 @@ async function loadMyOrders() {
             return;
         }
 
-        console.log("👤 User ID:", userId);
+        console.debug("[My Orders] Loading orders for authenticated user");
 
         // Get only this user's orders
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
         const response = await fetch(
-            `https://alhayat-ai-restaurant-backend.onrender.com/my-orders/${userId}`,
+            `${apiBase}/my-orders/${encodeURIComponent(userId)}`,
             {
                 method: "GET",
                 headers: {
@@ -312,6 +313,14 @@ async function loadMyOrders() {
         );
 
         console.log("📡 Response Status:", response.status);
+
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            alert("Login session expired. Please login again.");
+            window.location.href = "login.html";
+            return;
+        }
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -462,8 +471,9 @@ async function submitReview(orderId) {
     const review =
         document.getElementById(`review-${orderId}`).value;
 
+    const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
     const response = await fetch(
-        "https://alhayat-ai-restaurant-backend.onrender.com/add-review",
+        `${apiBase}/add-review`,
         {
             method: "POST",
             headers: {
