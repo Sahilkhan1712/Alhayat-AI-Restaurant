@@ -43,14 +43,20 @@ const upload = multer({
 // Always load the backend's own environment file, regardless of the shell cwd.
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
-const razorpayKeyConfigured = Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
+const RAZORPAY_TEST_KEY_ID = "rzp_test_TtI79lR7NgpyNa";
+const RAZORPAY_TEST_KEY_SECRET = "eRJtIFyLdC72IJ5ccVXzdxNQ";
+
 const razorpayMode = String(process.env.RAZORPAY_MODE || "TEST").trim().toUpperCase();
+const razorpayKeyId = process.env.RAZORPAY_KEY_ID || (razorpayMode === "TEST" ? RAZORPAY_TEST_KEY_ID : "");
+const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || (razorpayMode === "TEST" ? RAZORPAY_TEST_KEY_SECRET : "");
+
+const razorpayKeyConfigured = Boolean(razorpayKeyId && razorpayKeySecret);
 const razorpayKeyModeMatches = razorpayMode === "LIVE"
-    ? Boolean(process.env.RAZORPAY_KEY_ID && /^rzp_live_/.test(process.env.RAZORPAY_KEY_ID))
+    ? Boolean(razorpayKeyId && /^rzp_live_/.test(razorpayKeyId))
     : razorpayMode === "TEST"
-        ? Boolean(process.env.RAZORPAY_KEY_ID && /^rzp_test_/.test(process.env.RAZORPAY_KEY_ID))
+        ? Boolean(razorpayKeyId && /^rzp_test_/.test(razorpayKeyId))
         : false;
-console.log(`[Razorpay] mode: ${razorpayMode}; key id configured: ${Boolean(process.env.RAZORPAY_KEY_ID)}; secret configured: ${Boolean(process.env.RAZORPAY_KEY_SECRET)}; key format matches mode: ${razorpayKeyModeMatches}`);
+console.log(`[Razorpay] mode: ${razorpayMode}; key id configured: ${Boolean(razorpayKeyId)}; secret configured: ${Boolean(razorpayKeySecret)}; key format matches mode: ${razorpayKeyModeMatches}`);
 
 
 const authRoutes = require("./routes/auth");
@@ -268,6 +274,7 @@ app.get("/health", (req, res) => {
         status: "ok",
         service: "AlHayat AI Restaurant Backend",
         razorpayMode: razorpayMode,
+        razorpayConfigured: Boolean(razorpay),
         timestamp: new Date().toISOString()
     });
 });
@@ -489,7 +496,7 @@ ${menuText}
 const youpiApiUrl = String(process.env.YOUPI_API_URL || "http://localhost:6100").replace(/\/$/, "");
 const frontendUrl = String(process.env.FRONTEND_URL || "http://localhost:5500").replace(/\/$/, "");
 const razorpay = razorpayKeyConfigured && razorpayKeyModeMatches
-    ? new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET })
+    ? new Razorpay({ key_id: razorpayKeyId, key_secret: razorpayKeySecret })
     : null;
 
 app.post("/place-order", async (req, res) => {
@@ -526,7 +533,7 @@ app.post("/place-order", async (req, res) => {
                 return res.status(502).json({ success: false, message: "Razorpay order could not be created. Verify the Test Mode key/account configuration." });
             }
             await Order.findByIdAndUpdate(newOrder._id, { paymentId: gateway.id });
-            return res.status(201).json({ success: true, orderId: newOrder._id, razorpayOrderId: gateway.id, keyId: process.env.RAZORPAY_KEY_ID, amount: gateway.amount, currency: gateway.currency, total: totalPaise / 100 });
+            return res.status(201).json({ success: true, orderId: newOrder._id, razorpayOrderId: gateway.id, keyId: razorpayKeyId, amount: gateway.amount, currency: gateway.currency, total: totalPaise / 100 });
         }
         return res.status(201).json({ success: true, orderId: newOrder._id, total: totalPaise / 100 });
     } catch (error) {
@@ -553,7 +560,7 @@ app.post("/payments/verify", async (req, res) => {
         const order = await Order.findById(orderId);
         if (!order || order.paymentId !== razorpay_order_id) return res.status(400).json({ success: false, message: "Payment order mismatch." });
         if (order.paymentStatus === "Paid") return res.json({ success: true, orderId, paymentStatus: "Paid" });
-        if (!verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature, process.env.RAZORPAY_KEY_SECRET)) return res.status(400).json({ success: false, message: "Invalid payment signature." });
+        if (!verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature, razorpayKeySecret)) return res.status(400).json({ success: false, message: "Invalid payment signature." });
         const [gatewayOrder, payment] = await Promise.all([razorpay.orders.fetch(razorpay_order_id), razorpay.payments.fetch(razorpay_payment_id)]);
         const valid = gatewayOrder.amount === order.totalPaise && String(gatewayOrder.currency).toUpperCase() === "INR" && payment.order_id === razorpay_order_id && payment.status === "captured";
         if (!valid) return res.status(400).json({ success: false, message: "Payment is not captured or amount does not match." });

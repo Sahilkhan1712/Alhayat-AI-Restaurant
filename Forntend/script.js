@@ -537,9 +537,7 @@ async function placeOrder() {
 
     } catch (error) {
         console.error("Place Order Error:", error);
-
-        alert("Order Error: " + error.message);
-        alert("❌ " + error.message);
+        alert("❌ Order Error: " + error.message);
     } finally {
         if (payButton) payButton.disabled = false;
     }
