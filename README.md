@@ -50,7 +50,7 @@ To transform traditional restaurant services into a smarter digital experience b
 
 ## 👨‍💻 Developed By
 
-**Mohd Sahil Hayat Khan**
+**Mohd Sahil**
 
 B.Tech – Computer Science & Engineering (AI & ML)
 
