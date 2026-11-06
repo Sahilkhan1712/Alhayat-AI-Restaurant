@@ -145,31 +145,159 @@ select {
     color: #ffc107;
     font-weight: bold;
 }
-.light-mode{
-    background: #f5f5f5;
-    color: black;
+/* =====================================================
+   PREMIUM 3D LIGHT MODE (CHAMPAGNE & WARM GOLDEN AMBER)
+   Dark Mode remains 100% untouched.
+===================================================== */
+.light-mode {
+    background: radial-gradient(circle at 50% 0%, #fbf6ec 0%, #f3ebdb 50%, #eae0ce 100%) !important;
+    color: #241711 !important;
 }
 
-.light-mode .card{
-    background: white;
-    color: black;
+/* 3D Frosted Luxury Navbar in Light Mode */
+.light-mode .navbar {
+    background: linear-gradient(135deg, rgba(254, 250, 243, 0.96) 0%, rgba(246, 238, 224, 0.96) 50%, rgba(238, 225, 204, 0.98) 100%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 2px solid rgba(212, 160, 23, 0.55) !important;
+    box-shadow: 0 12px 35px rgba(133, 90, 20, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
-.light-mode .navbar{
-    background: #ffffff !important;
+.light-mode .nav-link {
+    color: #2c1a10 !important;
+    font-weight: 600 !important;
+    transition: all 0.25s ease !important;
 }
 
-.light-mode .nav-link{
-    color: black !important;
+.light-mode .nav-link:hover,
+.light-mode .nav-link:focus {
+    color: #b8860b !important;
+    text-shadow: 0 1px 8px rgba(184, 134, 11, 0.35) !important;
 }
 
-.light-mode .hero{
-    color: white;
+/* 3D Dark Mode Toggle Button in Light Mode */
+.light-mode .dark-mode-btn {
+    background: linear-gradient(135deg, #2b1d14 0%, #150f0a 100%) !important;
+    color: #ffc107 !important;
+    border: 1px solid rgba(255, 193, 7, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(43, 29, 20, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
-.light-mode .overlay{
-    background: rgba(255,255,255,0.7);
-    color: black;
+.light-mode .dark-mode-btn:hover {
+    background: linear-gradient(135deg, #3d2a1d 0%, #201610 100%) !important;
+    color: #ffd54f !important;
+    box-shadow: 0 6px 18px rgba(43, 29, 20, 0.35) !important;
+    transform: translateY(-2px);
+}
+
+/* Mobile 3-Dot Button in Light Mode */
+.light-mode .mobile-menu-btn {
+    color: #2c1a10 !important;
+    text-shadow: 0 1px 4px rgba(212, 160, 23, 0.4);
+}
+
+.light-mode #navbarLinks.mobile-menu-open {
+    background: linear-gradient(145deg, rgba(254, 250, 243, 0.98) 0%, rgba(243, 233, 218, 0.98) 100%) !important;
+    border: 1px solid rgba(212, 160, 23, 0.45) !important;
+    box-shadow: 0 15px 40px rgba(100, 65, 15, 0.25) !important;
+}
+
+/* 3D Glass Hero Overlay Card in Light Mode (Replaces washed-out flat white) */
+.light-mode .overlay {
+    background: linear-gradient(145deg, rgba(28, 18, 12, 0.82) 0%, rgba(14, 9, 6, 0.88) 100%) !important;
+    border: 1.5px solid rgba(255, 193, 7, 0.6) !important;
+    border-radius: 26px !important;
+    padding: 40px !important;
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(212, 160, 23, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.25),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    color: #fff !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.light-mode .overlay:hover {
+    box-shadow: 
+        0 30px 70px rgba(0, 0, 0, 0.6),
+        0 0 50px rgba(212, 160, 23, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px);
+}
+
+.light-mode .overlay h1,
+.light-mode .hero h1 {
+    color: #ffc107 !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 193, 7, 0.5) !important;
+    font-weight: 800 !important;
+}
+
+.light-mode .overlay p {
+    color: #f7f1e6 !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+    font-size: 21px !important;
+    font-weight: 500 !important;
+}
+
+/* 3D Embossed Luxury Cards in Light Mode */
+.light-mode .card,
+.light-mode .food-card {
+    background: linear-gradient(145deg, #ffffff 0%, #faf5ec 100%) !important;
+    border: 1px solid rgba(212, 160, 23, 0.3) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 14px 30px rgba(120, 80, 20, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    color: #241711 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.light-mode .card:hover,
+.light-mode .food-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 20px 40px rgba(120, 80, 20, 0.2), 0 0 20px rgba(255, 193, 7, 0.3) !important;
+    border-color: rgba(212, 160, 23, 0.6) !important;
+}
+
+.light-mode .card-title,
+.light-mode .food-title {
+    color: #1f140e !important;
+    font-weight: 700 !important;
+}
+
+.light-mode .card-text,
+.light-mode .food-desc {
+    color: #55443a !important;
+}
+
+/* 3D Dropdown Menu in Light Mode */
+.light-mode .dropdown-menu {
+    background: linear-gradient(145deg, #ffffff 0%, #faf3e6 100%) !important;
+    border: 1px solid rgba(212, 160, 23, 0.45) !important;
+    box-shadow: 0 18px 45px rgba(100, 65, 15, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+.light-mode .dropdown-item {
+    color: #261810 !important;
+}
+
+.light-mode .dropdown-item:hover,
+.light-mode .dropdown-item:focus {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+    color: #996500 !important;
+}
+
+/* Section Headings in Light Mode */
+.light-mode h1:not(.overlay h1),
+.light-mode h2,
+.light-mode h3,
+.light-mode h4 {
+    color: #24160e !important;
+}
+
+.light-mode .section-title {
+    color: #b8860b !important;
+    text-shadow: 0 1px 8px rgba(184, 134, 11, 0.25) !important;
 }
 /* Responsive */
 @media (max-width: 768px) {
@@ -3467,3 +3595,151 @@ nav.navbar {
 
 
 
+
+/* =====================================================
+   USER PROFILE NAVBAR & DROPDOWN ENHANCEMENTS
+===================================================== */
+.dropdown-menu {
+    background-color: #1a1a1a !important;
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+    padding: 8px !important;
+}
+
+.dropdown-item {
+    color: #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 8px 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+    color: #ffc107 !important;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    color: #ff6b6b !important;
+}
+
+#authNavItem .dropdown-toggle::after {
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+@media (max-width: 991px) {
+    #navbarLinks.mobile-menu-open #authNavItem {
+        width: 100%;
+        margin-top: 10px;
+        margin-left: 0 !important;
+    }
+
+    #navbarLinks.mobile-menu-open #authNavItem .dropdown,
+    #navbarLinks.mobile-menu-open #authNavItem .dropdown > button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #navbarLinks.mobile-menu-open #authNavItem .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+
+/* =====================================================
+   ⭐ CUSTOMER RATINGS & REVIEWS 3D STYLING
+===================================================== */
+.reviews-section {
+    position: relative;
+    padding: 60px 0;
+}
+
+.reviews-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(255, 193, 7, .12);
+    border: 1px solid rgba(255, 193, 7, .4);
+    color: #ffc107;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.rating-summary-card {
+    background: radial-gradient(circle at top left, rgba(255, 193, 7, 0.12), transparent 45%), linear-gradient(145deg, #181818, #111111);
+    border: 1px solid rgba(255, 193, 7, 0.35);
+    border-radius: 22px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.review-card {
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 193, 7, 0.22);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 193, 7, 0.5);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.interactive-star-row {
+    font-size: 38px;
+    user-select: none;
+}
+
+.rating-star-btn {
+    cursor: pointer;
+    color: #444;
+    transition: transform 0.15s ease, color 0.15s ease;
+    display: inline-block;
+}
+
+.rating-star-btn:hover {
+    transform: scale(1.2);
+}
+
+.rating-star-btn.active,
+.rating-star-btn.hover {
+    color: #ffc107;
+    text-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
+}
+
+/* Light Mode adaptations for Ratings */
+.light-mode .rating-summary-card {
+    background: linear-gradient(145deg, #ffffff 0%, #faf3e6 100%) !important;
+    border: 1px solid rgba(212, 160, 23, 0.4) !important;
+    box-shadow: 0 15px 40px rgba(120, 80, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    color: #221710 !important;
+}
+
+.light-mode .rating-summary-card p {
+    color: #55443a !important;
+}
+
+.light-mode .review-card {
+    background: linear-gradient(145deg, #ffffff 0%, #faf5ea 100%) !important;
+    border: 1px solid rgba(212, 160, 23, 0.3) !important;
+    box-shadow: 0 10px 25px rgba(120, 80, 20, 0.1) !important;
+    color: #221710 !important;
+}
+
+.light-mode .review-card strong {
+    color: #1f140e !important;
+}
+
+.light-mode .review-card p {
+    color: #44332a !important;
+}
+
+.light-mode .reviews-heading h2 {
+    color: #24160e !important;
+}

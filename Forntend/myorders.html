@@ -4,26 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders | AlHayat AI</title>
+    <title>My Orders | AlHayat AI Restaurant</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.orders-page {
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 85px;
+            padding-bottom: 60px;
+        }
+
+        .orders-nav {
+            background: rgba(18, 18, 18, 0.95) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 193, 7, 0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .orders-nav .nav-link {
+            color: #ddd !important;
+            font-weight: 500;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .orders-nav .nav-link:hover,
+        .orders-nav .nav-link.active {
+            color: #ffc107 !important;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .btn-orders-logout {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.4);
+            color: #ff5c6c;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-orders-logout:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+    </style>
 </head>
 
-<body class="bg-dark text-white">
+<body class="orders-page">
 
-<div class="container py-5">
+    <!-- TOP NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark orders-nav fixed-top px-3 px-md-4">
+        <div class="container-fluid">
+            <!-- LOGO / BRAND -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="logo.png" alt="AlHayat AI Logo" style="height: 48px; width: auto;">
+                <span class="text-warning fw-bold fs-4 d-none d-sm-inline">AlHayat AI</span>
+            </a>
 
-    <h1 class="text-warning text-center mb-5">
-        My Orders
-    </h1>
+            <!-- MOBILE TOGGLE BUTTON -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#ordersNavContent" aria-controls="ordersNavContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <div id="myOrders"></div>
+            <!-- TOP OPTIONS -->
+            <div class="collapse navbar-collapse" id="ordersNavContent">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 gap-md-2 mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            🏠 Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#menu">
+                            🍽️ Menu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="myorders.html">
+                            📦 My Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">
+                            👤 My Profile
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="config.js"></script>
+    <div class="container py-4">
 
-<script src="myorders.js"></script>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 border-bottom border-secondary pb-3">
+            <div>
+                <h2 class="text-warning fw-bold mb-1">
+                    📦 My Order History
+                </h2>
+                <p class="text-secondary small mb-0">Track all your previous and live food orders with AlHayat AI</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="profile.html" class="btn btn-outline-warning btn-sm">
+                    👤 View My Profile
+                </a>
+                <a href="index.html#menu" class="btn btn-warning btn-sm fw-bold">
+                    + Order More Food
+                </a>
+            </div>
+        </div>
+
+        <div id="myOrders"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="config.js"></script>
+    <script src="myorders.js"></script>
+
+    <script>
+        function logoutFromOrders() {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                alert("Logout Successful 👋");
+                window.location.href = "login.html";
+            }
+        }
+    </script>
 
 </body>
 

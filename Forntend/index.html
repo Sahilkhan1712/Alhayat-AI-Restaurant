@@ -1047,7 +1047,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#join-team">Careers</a>
+                <a class="nav-link" href="#join-team" onclick="openFooterSection('join-team'); if(typeof closeMobileMenu === 'function') closeMobileMenu();">Careers</a>
             </li>
 
 
@@ -1061,8 +1061,8 @@
                 </a>
             </li>
 
-            <!-- LOGIN / USER -->
-            <li class="nav-item ms-2" id="authNavItem">
+            <!-- LOGIN / USER DROPDOWN -->
+            <li class="nav-item ms-lg-2" id="authNavItem">
                 <a href="login.html" class="btn btn-warning fw-bold px-4">
                     🔐 Login
                 </a>
@@ -3605,6 +3605,150 @@
         </div>
 
     </section>
+
+    <!-- =====================================================
+         ⭐ ALHAYAT — CUSTOMER RATINGS & REVIEWS
+    ===================================================== -->
+    <section id="reviews" class="reviews-section container my-5">
+        <div class="reviews-heading text-center mb-5">
+            <span class="reviews-badge">⭐ GUEST RATINGS & REVIEWS</span>
+            <h2 class="display-5 fw-bold text-white mt-2">
+                Real Foodies, Real <span class="text-warning">Ratings</span>
+            </h2>
+            <p class="text-secondary mx-auto" style="max-width: 620px;">
+                Loved by 1,400+ food lovers. See what guests say about our AI-crafted delicacies, authentic tastes & superfast delivery.
+            </p>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            <!-- RATING SCORECARD -->
+            <div class="col-lg-4 col-md-5">
+                <div class="rating-summary-card p-4 h-100 text-center">
+                    <div class="rating-big-number text-warning fw-bold display-3 mb-1">4.9</div>
+                    <div class="rating-stars text-warning fs-3 mb-2">★★★★★</div>
+                    <p class="text-light small mb-3">Overall Guest Satisfaction (1,480+ Ratings)</p>
+
+                    <!-- BREAKDOWN BARS -->
+                    <div class="rating-bars text-start mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="small text-muted" style="width: 25px;">5★</span>
+                            <div class="progress flex-grow-1" style="height: 8px; background: #252525;">
+                                <div class="progress-bar bg-warning" style="width: 92%;"></div>
+                            </div>
+                            <span class="small text-muted" style="width: 35px;">92%</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="small text-muted" style="width: 25px;">4★</span>
+                            <div class="progress flex-grow-1" style="height: 8px; background: #252525;">
+                                <div class="progress-bar bg-warning" style="width: 6%;"></div>
+                            </div>
+                            <span class="small text-muted" style="width: 35px;">6%</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="small text-muted" style="width: 25px;">3★</span>
+                            <div class="progress flex-grow-1" style="height: 8px; background: #252525;">
+                                <div class="progress-bar bg-warning" style="width: 2%;"></div>
+                            </div>
+                            <span class="small text-muted" style="width: 35px;">2%</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="small text-muted" style="width: 25px;">2★</span>
+                            <div class="progress flex-grow-1" style="height: 8px; background: #252525;">
+                                <div class="progress-bar bg-warning" style="width: 0%;"></div>
+                            </div>
+                            <span class="small text-muted" style="width: 35px;">0%</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small text-muted" style="width: 25px;">1★</span>
+                            <div class="progress flex-grow-1" style="height: 8px; background: #252525;">
+                                <div class="progress-bar bg-warning" style="width: 0%;"></div>
+                            </div>
+                            <span class="small text-muted" style="width: 35px;">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- RATE US BUTTON -->
+                    <button type="button" class="btn btn-warning fw-bold w-100 py-3 shadow-lg" onclick="openRatingModal()">
+                        ⭐ Rate Your Experience
+                    </button>
+                    <small class="text-secondary d-block mt-2">Takes less than 30 seconds</small>
+                </div>
+            </div>
+
+            <!-- REVIEWS LIST GRID -->
+            <div class="col-lg-8 col-md-7">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold text-warning mb-0">Recent Guest Reviews</h5>
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="openRatingModal()">
+                        + Write a Review
+                    </button>
+                </div>
+                <div id="reviewsContainer" class="row g-3">
+                    <!-- Dynamic and Default Reviews loaded by script -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         ⭐ INTERACTIVE RATING MODAL
+    ===================================================== -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border border-warning" style="border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-warning fw-bold" id="ratingModalLabel">
+                        ⭐ Rate Your Experience
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form onsubmit="event.preventDefault(); submitRatingReview();">
+                        <!-- STAR SELECTOR -->
+                        <div class="text-center mb-3">
+                            <label class="form-label text-secondary small d-block mb-1">Select Star Rating</label>
+                            <div class="interactive-star-row justify-content-center d-flex gap-2 mb-2" id="starRatingRow">
+                                <span class="rating-star-btn active" data-val="1" onclick="selectRatingStar(1)" onmouseover="hoverRatingStar(1)" onmouseout="resetRatingStars()">★</span>
+                                <span class="rating-star-btn active" data-val="2" onclick="selectRatingStar(2)" onmouseover="hoverRatingStar(2)" onmouseout="resetRatingStars()">★</span>
+                                <span class="rating-star-btn active" data-val="3" onclick="selectRatingStar(3)" onmouseover="hoverRatingStar(3)" onmouseout="resetRatingStars()">★</span>
+                                <span class="rating-star-btn active" data-val="4" onclick="selectRatingStar(4)" onmouseover="hoverRatingStar(4)" onmouseout="resetRatingStars()">★</span>
+                                <span class="rating-star-btn active" data-val="5" onclick="selectRatingStar(5)" onmouseover="hoverRatingStar(5)" onmouseout="resetRatingStars()">★</span>
+                            </div>
+                            <div class="fw-bold text-warning" id="ratingMoodText">🤩 Outstanding! Absolutely loved it!</div>
+                        </div>
+
+                        <!-- CATEGORY PILLS -->
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small d-block mb-2">What did you like most?</label>
+                            <div class="pill-group" id="ratingCategoryGroup">
+                                <button type="button" class="pill-btn active" data-cat="Food Taste & Quality" onclick="selectRatingCategory('Food Taste & Quality')">🍕 Food Taste</button>
+                                <button type="button" class="pill-btn" data-cat="Superfast Delivery" onclick="selectRatingCategory('Superfast Delivery')">⚡️ Fast Delivery</button>
+                                <button type="button" class="pill-btn" data-cat="AI Recommendations" onclick="selectRatingCategory('AI Recommendations')">🤖 AI Service</button>
+                                <button type="button" class="pill-btn" data-cat="Overall Hospitality" onclick="selectRatingCategory('Overall Hospitality')">💎 Overall Dining</button>
+                            </div>
+                        </div>
+
+                        <!-- YOUR NAME -->
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small" for="reviewerName">Your Name *</label>
+                            <input type="text" id="reviewerName" class="form-control" placeholder="e.g. Mohd Sahil" required>
+                        </div>
+
+                        <!-- FEEDBACK COMMENT -->
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small" for="reviewerComment">Your Review & Comments *</label>
+                            <textarea id="reviewerComment" class="form-control" rows="3" placeholder="Share your experience about food quality, taste, delivery..." required></textarea>
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <button type="submit" id="submitReviewBtn" class="btn btn-warning w-100 fw-bold py-3">
+                            ✨ Submit Rating & Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- =========================

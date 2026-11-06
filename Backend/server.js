@@ -64,6 +64,7 @@ const authRoutes = require("./routes/auth");
 const Order = require("./models/order");
 const Reservation = require("./models/Reservation");
 const JobApplication = require("./models/JobApplication");
+const Review = require("./models/Review");
 
 
 
@@ -142,7 +143,8 @@ app.post("/webhooks/razorpay", express.raw({ type: "application/json" }), async 
     }
 });
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 
 // ===============================
@@ -277,6 +279,48 @@ app.get("/health", (req, res) => {
         razorpayConfigured: Boolean(razorpay),
         timestamp: new Date().toISOString()
     });
+});
+
+// ===============================
+// RATINGS & REVIEWS API
+// ===============================
+
+app.get("/api/reviews", async (req, res) => {
+    try {
+        const reviews = await Review.find().sort({ createdAt: -1 }).limit(25);
+        return res.json({ success: true, reviews });
+    } catch (err) {
+        console.error("Get Reviews Error:", err);
+        return res.status(500).json({ success: false, message: "Could not fetch reviews" });
+    }
+});
+
+app.post("/api/reviews", async (req, res) => {
+    try {
+        const { userName, userAvatar, rating, category, comment, userId } = req.body;
+        if (!userName || !rating || !comment) {
+            return res.status(400).json({ success: false, message: "Name, rating and comments are required." });
+        }
+        const numericRating = Math.min(5, Math.max(1, Number(rating) || 5));
+        const newReview = new Review({
+            userId: userId || null,
+            userName: String(userName).trim(),
+            userAvatar: userAvatar || "",
+            rating: numericRating,
+            category: category || "Overall Experience",
+            comment: String(comment).trim(),
+            isVerified: true
+        });
+        await newReview.save();
+        return res.status(201).json({
+            success: true,
+            message: "Thank you for your rating! ⭐",
+            review: newReview
+        });
+    } catch (err) {
+        console.error("Submit Review Error:", err);
+        return res.status(500).json({ success: false, message: "Could not submit review" });
+    }
 });
 
 // ===============================

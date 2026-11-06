@@ -4,75 +4,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup | AlHayat AI Restaurant</title>
+    <title>Create Account | AlHayat AI Restaurant</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.auth-page {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #242424 0%, #0d0d0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(26, 26, 26, 0.95);
+            border: 1px solid rgba(255, 193, 7, 0.35);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 193, 7, 0.15);
+            padding: 35px 28px;
+            color: #fff;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #ffc107;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-card .form-control {
+            background: #252525;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-card .form-control:focus {
+            background: #2b2b2b;
+            border-color: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            color: #fff;
+        }
+
+        .auth-card .form-control::placeholder {
+            color: #888;
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            border: none;
+            color: #111;
+            font-weight: 700;
+            padding: 13px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+            color: #000;
+        }
+
+        .auth-footer a {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .home-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 15px;
+            transition: color 0.2s;
+        }
+
+        .home-link:hover {
+            color: #ffc107;
+        }
+    </style>
 </head>
 
-<body class="bg-dark">
+<body class="auth-page">
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="auth-card">
+        <div class="text-center mb-3">
+            <span class="brand-badge">✨ AI Smart Dining</span>
+            <h2 class="text-warning fw-bold mt-2 mb-1">AlHayat AI</h2>
+            <p class="text-secondary small">Create your account to unlock personalized dining & profile</p>
+        </div>
 
-    <div class="card p-4 shadow-lg" style="width:400px; border-radius:15px;">
+        <form onsubmit="event.preventDefault(); signup();">
+            <div class="mb-3">
+                <label class="form-label small text-secondary">Full Name *</label>
+                <input type="text" id="name" class="form-control" placeholder="e.g. Mohd Sahil" required autocomplete="name">
+            </div>
 
-        <h2 class="text-center text-warning mb-4">
-            AlHayat AI
-        </h2>
+            <div class="mb-3">
+                <label class="form-label small text-secondary">Email Address *</label>
+                <input type="email" id="email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+            </div>
 
-        <h4 class="text-center mb-4">
-            Create Account
-        </h4>
+            <div class="mb-3">
+                <label class="form-label small text-secondary">Phone Number *</label>
+                <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210" required autocomplete="tel">
+            </div>
 
-        <input
-            type="text"
-            id="name"
-            class="form-control mb-3"
-            placeholder="Full Name">
+            <div class="mb-4">
+                <label class="form-label small text-secondary">Password *</label>
+                <input type="password" id="password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+            </div>
 
-        <input
-            type="email"
-            id="email"
-            class="form-control mb-3"
-            placeholder="Email">
+            <button type="submit" id="signupBtn" class="btn btn-signup w-100">
+                🚀 Create Account & Setup Profile
+            </button>
+        </form>
 
-        <input
-            type="text"
-            id="phone"
-            class="form-control mb-3"
-            placeholder="Phone Number">
-
-        <input
-            type="password"
-            id="password"
-            class="form-control mb-3"
-            placeholder="Password">
-
-        <button
-            class="btn btn-warning w-100"
-            onclick="signup()">
-
-            Signup
-
-        </button>
-
-        <p class="text-center mt-3">
-
-            Already have an account?
-
-            <a href="login.html">
-
-                Login
-
-            </a>
-
-        </p>
-
+        <div class="auth-footer text-center mt-4 pt-3 border-top border-secondary">
+            <p class="mb-1 text-light">Already have an account? <a href="login.html">Login here</a></p>
+            <a href="index.html" class="home-link">← Back to Restaurant Menu</a>
+        </div>
     </div>
 
-</div>
-
-<script src="config.js"></script>
-<script src="signup.js"></script>
+    <script src="config.js"></script>
+    <script src="signup.js"></script>
 
 </body>
 

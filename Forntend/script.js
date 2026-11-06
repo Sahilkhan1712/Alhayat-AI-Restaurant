@@ -811,20 +811,68 @@ if (socket) {
 }
 
 // ==========================================
-// 👤 USER NAVBAR LOGIN SYSTEM
+// 👤 USER NAVBAR & PROFILE INTEGRATION
 // ==========================================
+
+function getNavbarUserAvatar(user) {
+    if (user && user.avatar) return user.avatar;
+    const cleanName = encodeURIComponent(((user && user.name) || "User").trim());
+    return `https://api.dicebear.com/7.x/initials/svg?seed=${cleanName}&backgroundColor=ffc107&textColor=111111`;
+}
+
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 function updateUserNavbar() {
     const authNavItem = document.getElementById("authNavItem");
+    const navProfileLink = document.getElementById("navProfileLink");
+    if (navProfileLink) navProfileLink.remove(); // Remove separate profile button from navbar
     if (!authNavItem) return;
 
     const userData = localStorage.getItem("user");
 
     if (!userData) {
+        // Logged out state: Only Login button, with Registration underneath inside dropdown
         authNavItem.innerHTML = `
-            <a href="login.html" class="btn btn-warning fw-bold px-4">
-                🔐 Login
-            </a>
+            <div class="dropdown">
+                <button
+                    class="btn btn-warning fw-bold px-4 dropdown-toggle d-flex align-items-center gap-2"
+                    type="button"
+                    id="loginNavDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <span>🔐 Login</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="loginNavDropdown" style="background:#1e1e1e; border:1px solid rgba(255,193,7,0.35); min-width:230px;">
+                    <li>
+                        <a class="dropdown-item text-light py-2 fw-semibold d-flex align-items-center gap-2" href="login.html">
+                            <span class="fs-5">🔐</span>
+                            <div>
+                                <div>Login to Account</div>
+                                <small class="text-secondary d-block" style="font-size:11px;">Already registered? Login</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider border-secondary my-1"></li>
+                    <li>
+                        <div class="px-3 pt-1 text-muted" style="font-size:11px;">Don't have an account?</div>
+                        <a class="dropdown-item text-warning py-2 fw-bold d-flex align-items-center gap-2" href="signup.html">
+                            <span class="fs-5">📝</span>
+                            <div>
+                                <div>New Registration</div>
+                                <small class="text-light d-block" style="font-size:11px; opacity:0.8;">Create a new account</small>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         `;
         return;
     }
@@ -833,34 +881,86 @@ function updateUserNavbar() {
         const user = JSON.parse(userData);
         const name = user.name || "User";
         const email = user.email || "";
+        const firstName = name.split(" ")[0] || "User";
+        const avatarSrc = getNavbarUserAvatar(user);
 
+        // Logged in state: ONLY the User Name button shows!
+        // Separate Profile link is removed. Clicking Name shows: Profile, My Orders, Settings, and Logout!
         authNavItem.innerHTML = `
             <div class="dropdown">
                 <button
-                    class="btn btn-warning fw-bold px-3 dropdown-toggle"
+                    class="btn btn-warning fw-bold px-3 dropdown-toggle d-flex align-items-center gap-2"
                     type="button"
-                    data-bs-toggle="dropdown">
-                    👋 Welcome, ${name}
+                    id="userProfileDropdownBtn"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="${avatarSrc}" alt="${escapeHtml(name)}" class="rounded-circle" style="width:26px; height:26px; object-fit:cover; border:1px solid #111;">
+                    <span>👋 ${escapeHtml(firstName)}</span>
                 </button>
 
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userProfileDropdownBtn" style="background:#1e1e1e; border:1px solid rgba(255,193,7,0.35); min-width:240px;">
                     <li>
-                        <h6 class="dropdown-header">👤 ${name}</h6>
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom border-secondary mb-1">
+                            <img src="${avatarSrc}" alt="${escapeHtml(name)}" class="rounded-circle" style="width:38px; height:38px; object-fit:cover; border:2px solid #ffc107;">
+                            <div style="overflow:hidden;">
+                                <div class="fw-bold text-white small text-truncate">${escapeHtml(name)}</div>
+                                <div class="text-secondary" style="font-size:11px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(email)}</div>
+                            </div>
+                        </div>
                     </li>
                     <li>
-                        <span class="dropdown-item-text">${email}</span>
+                        <a class="dropdown-item text-light py-2" href="profile.html">
+                            👤 <strong>My Profile</strong>
+                            <small class="text-muted d-block" style="font-size:11px;">Edit name, photo, phone & address</small>
+                        </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-light py-2" href="myorders.html">
+                            📦 <strong>My Orders</strong>
+                            <small class="text-muted d-block" style="font-size:11px;">View and track your food orders</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-light py-2" href="profile.html#addressSection">
+                            📍 <strong>Delivery Address</strong>
+                            <small class="text-muted d-block" style="font-size:11px;">Manage street, city & notes</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-light py-2" href="profile.html#preferenceSection">
+                            🍽️ <strong>Food Preferences</strong>
+                            <small class="text-muted d-block" style="font-size:11px;">Veg/Non-Veg & favorites</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-light py-2" href="profile.html">
+                            ⚙️ <strong>Account Settings</strong>
+                        </a>
+                    </li>
                     <li>
                         <button
-                            class="dropdown-item text-danger fw-bold"
+                            class="dropdown-item text-warning fw-bold py-2 d-flex align-items-center gap-2"
+                            onclick="openRatingModal()">
+                            <span>⭐</span>
+                            <span>Rate Restaurant & Food</span>
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider border-secondary my-1"></li>
+                    <li>
+                        <button
+                            class="dropdown-item text-danger fw-bold py-2 d-flex align-items-center gap-2"
                             onclick="logoutUser()">
-                            🚪 Logout
+                            <span>🚪</span>
+                            <span>Logout</span>
                         </button>
                     </li>
                 </ul>
             </div>
         `;
+
+        // Prepopulate checkout address from saved profile
+        populateSavedAddressFromProfile(user);
+
     } catch (error) {
         console.error("User data error:", error);
         localStorage.removeItem("user");
@@ -868,11 +968,34 @@ function updateUserNavbar() {
     }
 }
 
+function populateSavedAddressFromProfile(user) {
+    if (!user) return;
+    const addressInput = document.getElementById("orderAddress");
+    if (!addressInput || addressInput.value.trim()) return;
+
+    const addr = user.address;
+    if (addr && (addr.street || addr.city)) {
+        const parts = [
+            addr.street,
+            addr.landmark ? `(Near: ${addr.landmark})` : "",
+            addr.city,
+            addr.state,
+            addr.pincode
+        ].filter(Boolean);
+
+        if (parts.length) {
+            addressInput.value = parts.join(", ");
+        }
+    }
+}
+
 function logoutUser() {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    alert("Logout Successful 👋");
-    window.location.href = "index.html";
+    if (confirm("Are you sure you want to log out from AlHayat AI?")) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        alert("Logout Successful 👋 See you soon!");
+        window.location.href = "index.html";
+    }
 }
 
 if (document.readyState === "loading") {
@@ -1328,7 +1451,28 @@ function openFooterSection(id) {
         if (openSection !== section) openSection.classList.remove("footer-section-open");
     });
     section.classList.add("footer-section-open");
-    window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    window.setTimeout(() => {
+        const navHeight = document.querySelector(".navbar")?.offsetHeight || 80;
+        const rect = section.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetY = rect.top + scrollTop - navHeight - 15;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+    }, 60);
+}
+
+// Auto open collapsed sections if requested via URL hash
+function checkHashForFooterSections() {
+    const hash = (window.location.hash || "").replace("#", "");
+    if (["join-team", "track-order", "reservation"].includes(hash)) {
+        openFooterSection(hash);
+    }
+}
+
+window.addEventListener("hashchange", checkHashForFooterSections);
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkHashForFooterSections);
+} else {
+    checkHashForFooterSections();
 }
 
 function toggleAIAssistant() {
@@ -1582,3 +1726,238 @@ async function placeOrderAfterDemoPayment() {
     };
     window.setInterval(rotate, 3000);
 })();
+
+// ==========================================
+// ⭐ RATINGS & REVIEWS SYSTEM
+// ==========================================
+
+let currentRatingValue = 5;
+let currentRatingCategory = "Food Taste & Quality";
+let ratingModalInstance = null;
+
+const ratingMoods = {
+    1: "😞 Poor experience",
+    2: "😐 Fair, could be better",
+    3: "🙂 Good experience",
+    4: "😋 Delicious! Very satisfied",
+    5: "🤩 Outstanding! Absolutely loved it!"
+};
+
+const defaultReviews = [
+    {
+        userName: "Aarav Sharma",
+        userAvatar: "https://api.dicebear.com/7.x/initials/svg?seed=Aarav&backgroundColor=ffc107&textColor=111111",
+        rating: 5,
+        category: "🍕 Food Taste & Quality",
+        comment: "The Butter Chicken and Garlic Naan were mind-blowing! Absolutely authentic taste, served piping hot. 10/10 recommend!",
+        timeAgo: "2 hours ago"
+    },
+    {
+        userName: "Priya Patel",
+        userAvatar: "https://api.dicebear.com/7.x/initials/svg?seed=Priya&backgroundColor=ffc107&textColor=111111",
+        rating: 5,
+        category: "⚡️ Superfast Delivery",
+        comment: "Delivered in just 22 minutes! The Farmhouse Pizza was super cheesy and fresh. The AI assistant recommended the perfect meal.",
+        timeAgo: "Yesterday"
+    },
+    {
+        userName: "Mohd Rizwan",
+        userAvatar: "https://api.dicebear.com/7.x/initials/svg?seed=Rizwan&backgroundColor=ffc107&textColor=111111",
+        rating: 5,
+        category: "🤖 AI Recommendations",
+        comment: "Asked the AI for spicy non-veg starters and it suggested Chicken Tikka with Schezwan dip. Best dining tech ever!",
+        timeAgo: "3 days ago"
+    },
+    {
+        userName: "Simran Kaur",
+        userAvatar: "https://api.dicebear.com/7.x/initials/svg?seed=Simran&backgroundColor=ffc107&textColor=111111",
+        rating: 5,
+        category: "💎 Overall Hospitality",
+        comment: "Great ambience, royal 3D theme, and delicious Dal Makhani. Booking a table and ordering online was super smooth.",
+        timeAgo: "5 days ago"
+    }
+];
+
+function openRatingModal() {
+    const modalEl = document.getElementById("ratingModal");
+    if (!modalEl) return;
+    if (!ratingModalInstance) {
+        ratingModalInstance = new bootstrap.Modal(modalEl);
+    }
+
+    // Auto-fill user name if logged in
+    try {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const nameInput = document.getElementById("reviewerName");
+        if (user && user.name && nameInput && !nameInput.value.trim()) {
+            nameInput.value = user.name;
+        }
+    } catch (_) {}
+
+    selectRatingStar(5);
+    ratingModalInstance.show();
+}
+
+function selectRatingStar(val) {
+    currentRatingValue = val;
+    const stars = document.querySelectorAll(".rating-star-btn");
+    stars.forEach((star) => {
+        const starVal = Number(star.getAttribute("data-val") || 0);
+        if (starVal <= val) {
+            star.classList.add("active");
+        } else {
+            star.classList.remove("active");
+        }
+    });
+
+    const moodEl = document.getElementById("ratingMoodText");
+    if (moodEl) {
+        moodEl.innerText = ratingMoods[val] || `${val} Stars`;
+    }
+}
+
+function hoverRatingStar(val) {
+    const stars = document.querySelectorAll(".rating-star-btn");
+    stars.forEach((star) => {
+        const starVal = Number(star.getAttribute("data-val") || 0);
+        if (starVal <= val) {
+            star.classList.add("hover");
+        } else {
+            star.classList.remove("hover");
+        }
+    });
+}
+
+function resetRatingStars() {
+    const stars = document.querySelectorAll(".rating-star-btn");
+    stars.forEach((star) => star.classList.remove("hover"));
+    selectRatingStar(currentRatingValue);
+}
+
+function selectRatingCategory(cat) {
+    currentRatingCategory = cat;
+    const group = document.getElementById("ratingCategoryGroup");
+    if (!group) return;
+    const btns = group.querySelectorAll(".pill-btn");
+    btns.forEach((btn) => {
+        if (btn.getAttribute("data-cat") === cat) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+}
+
+async function submitRatingReview() {
+    const nameInput = document.getElementById("reviewerName");
+    const commentInput = document.getElementById("reviewerComment");
+    const submitBtn = document.getElementById("submitReviewBtn");
+
+    const name = nameInput ? nameInput.value.trim() : "";
+    const comment = commentInput ? commentInput.value.trim() : "";
+
+    if (!name || !comment) {
+        alert("Please enter both your name and feedback comment.");
+        return;
+    }
+
+    let user = null;
+    try { user = JSON.parse(localStorage.getItem("user") || "null"); } catch (_) {}
+    const avatar = (user && user.avatar) || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=ffc107&textColor=111111`;
+    const userId = (user && user.id) || null;
+
+    const newReview = {
+        userName: name,
+        userAvatar: avatar,
+        rating: currentRatingValue,
+        category: currentRatingCategory,
+        comment: comment,
+        timeAgo: "Just now"
+    };
+
+    const originalText = submitBtn ? submitBtn.innerHTML : "Submit";
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "⏳ Submitting rating...";
+    }
+
+    // Save locally
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem("alhayat_reviews") || "[]"); } catch (_) { stored = []; }
+    stored.unshift(newReview);
+    localStorage.setItem("alhayat_reviews", JSON.stringify(stored));
+
+    // Send to backend
+    try {
+        const apiBase = (window.ALHAYAT_CONFIG && window.ALHAYAT_CONFIG.API_BASE_URL) || "https://alhayat-ai-restaurant-backend.onrender.com";
+        await fetch(`${apiBase}/api/reviews`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userName: name,
+                userAvatar: avatar,
+                rating: currentRatingValue,
+                category: currentRatingCategory,
+                comment: comment,
+                userId: userId
+            })
+        });
+    } catch (e) {
+        console.warn("Review saved locally:", e);
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+
+    if (ratingModalInstance) {
+        ratingModalInstance.hide();
+    }
+
+    if (commentInput) commentInput.value = "";
+    loadReviews();
+    alert(`Thank you for your rating! ⭐⭐⭐⭐⭐\nYour feedback helps us make AlHayat AI even better.`);
+}
+
+function loadReviews() {
+    const container = document.getElementById("reviewsContainer");
+    if (!container) return;
+
+    let userReviews = [];
+    try {
+        userReviews = JSON.parse(localStorage.getItem("alhayat_reviews") || "[]");
+    } catch (_) {
+        userReviews = [];
+    }
+
+    const allReviews = [...userReviews, ...defaultReviews];
+
+    container.innerHTML = allReviews.slice(0, 6).map((rev) => {
+        const stars = "★".repeat(rev.rating || 5);
+        return `
+            <div class="col-md-6">
+                <div class="review-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="${rev.userAvatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=user'}" alt="${escapeHtml(rev.userName)}" class="rounded-circle" style="width: 36px; height: 36px; object-fit: cover; border: 2px solid #ffc107;">
+                            <div>
+                                <strong class="text-white d-block small">${escapeHtml(rev.userName)}</strong>
+                                <small class="text-secondary" style="font-size: 11px;">✓ Verified Foodie • ${rev.timeAgo || 'Recently'}</small>
+                            </div>
+                        </div>
+                        <div class="text-warning fw-bold small">${stars}</div>
+                    </div>
+                    <span class="badge bg-dark text-warning border border-secondary mb-2" style="font-size: 11px;">${escapeHtml(rev.category || 'Overall')}</span>
+                    <p class="text-light small mb-0 fst-italic">"${escapeHtml(rev.comment)}"</p>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadReviews);
+} else {
+    loadReviews();
+}

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | AlHayat AI Restaurant</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary-gold: #ffc107;
+            --primary-gold-dark: #e0a800;
+            --dark-card: #1a1a1a;
+            --dark-card-hover: #222222;
+            --border-color: rgba(255, 193, 7, 0.25);
+        }
+
+        body.profile-body {
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 85px;
+            padding-bottom: 60px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Top Navbar */
+        .profile-nav {
+            background: rgba(18, 18, 18, 0.95) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-nav .nav-link {
+            color: #ddd !important;
+            font-weight: 500;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .profile-nav .nav-link:hover,
+        .profile-nav .nav-link.active {
+            color: var(--primary-gold) !important;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        /* Profile Cards */
+        .profile-card {
+            background: var(--dark-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: border-color 0.3s;
+        }
+
+        .profile-card:hover {
+            border-color: rgba(255, 193, 7, 0.45);
+        }
+
+        .profile-header-card {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.25), rgba(255, 100, 0, 0.15));
+            z-index: 0;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            z-index: 1;
+        }
+
+        .avatar-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-gold);
+            background: #252525;
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .avatar-badge-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            color: #111;
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .avatar-badge-btn:hover {
+            transform: scale(1.1);
+            background: #ffca2c;
+        }
+
+        .badge-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(40, 167, 69, 0.2);
+            color: #4cd964;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-vip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 193, 7, 0.15);
+            color: var(--primary-gold);
+            border: 1px solid rgba(255, 193, 7, 0.35);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* Form Controls */
+        .form-label {
+            font-size: 0.88rem;
+            color: #aaa;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            background: #242424;
+            border: 1px solid #3d3d3d;
+            color: #fff;
+            padding: 11px 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #2a2a2a;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+
+        /* Selectable Pill Buttons */
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill-btn {
+            background: #252525;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .pill-btn:hover {
+            border-color: var(--primary-gold);
+            color: #fff;
+        }
+
+        .pill-btn.active {
+            background: var(--primary-gold);
+            color: #111;
+            font-weight: 700;
+            border-color: var(--primary-gold);
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.35);
+        }
+
+        /* Buttons */
+        .btn-gold {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            border: none;
+            color: #111;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+            color: #000;
+        }
+
+        .btn-logout {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.4);
+            color: #ff5c6c;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Preset Avatar Modal / Picker */
+        .preset-avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .preset-avatar-item {
+            cursor: pointer;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 32px;
+            background: #252525;
+            transition: all 0.2s;
+        }
+
+        .preset-avatar-item:hover, .preset-avatar-item.selected {
+            border-color: var(--primary-gold);
+            background: #333;
+            transform: scale(1.08);
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.1));
+            border: 1px solid var(--primary-gold);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Toast */
+        #profileToast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 10000;
+            background: #1e1e1e;
+            border: 1px solid var(--primary-gold);
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            body.profile-body {
+                padding-top: 75px;
+            }
+            .profile-card {
+                padding: 18px;
+            }
+            .preset-avatar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body class="profile-body">
+
+    <!-- =====================================================
+         TOP NAVBAR
+    ===================================================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark profile-nav fixed-top px-3 px-md-4">
+        <div class="container-fluid">
+            <!-- LOGO / BRAND -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="logo.png" alt="AlHayat AI Logo" style="height: 48px; width: auto;">
+                <span class="text-warning fw-bold fs-4 d-none d-sm-inline">AlHayat AI</span>
+            </a>
+
+            <!-- MOBILE TOGGLE BUTTON -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#profileNavbarContent" aria-controls="profileNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- TOP OPTIONS ("uper hi dena option ok") -->
+            <div class="collapse navbar-collapse" id="profileNavbarContent">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 gap-md-2 mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            🏠 Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#menu">
+                            🍽️ Menu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="myorders.html">
+                            📦 My Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html">
+                            👤 Profile
+                        </a>
+                    </li>
+                    <!-- TOP LOGOUT OPTION -->
+                    <li class="nav-item ms-lg-2">
+                        <button type="button" class="btn btn-logout btn-sm px-3" onclick="logoutProfile()">
+                            🚪 Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- =====================================================
+         MAIN PROFILE CONTAINER
+    ===================================================== -->
+    <div class="container">
+
+        <!-- WELCOME BANNER (Shown for new registration / query flag) -->
+        <div id="welcomeBanner" class="welcome-banner" style="display: none;">
+            <div class="d-flex align-items-center gap-3">
+                <span style="font-size: 36px;">🎉</span>
+                <div>
+                    <h5 class="mb-1 text-warning fw-bold" id="welcomeHeading">Welcome to AlHayat AI!</h5>
+                    <p class="mb-0 text-light small">Your account is ready! Please complete your profile with your photo, address, and food preferences for fast, seamless dining.</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" onclick="document.getElementById('welcomeBanner').style.display='none'" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- =====================================================
+                 LEFT COLUMN: USER SUMMARY CARD
+            ===================================================== -->
+            <div class="col-lg-4 col-md-5">
+
+                <!-- MAIN AVATAR CARD -->
+                <div class="profile-card profile-header-card">
+
+                    <!-- AVATAR PHOTO & EDIT BUTTON -->
+                    <div class="avatar-wrapper">
+                        <img id="profileAvatarPreview" src="https://api.dicebear.com/7.x/bottts/svg?seed=AlHayatUser" alt="User Avatar" class="avatar-img">
+                        <button type="button" class="avatar-badge-btn" onclick="openPhotoPickerModal()" title="Change Profile Picture">
+                            📷
+                        </button>
+                    </div>
+
+                    <!-- USER NAME & EMAIL -->
+                    <h4 class="fw-bold mb-1" id="profileCardName">Foodie User</h4>
+                    <p class="text-secondary small mb-2 text-truncate" id="profileCardEmail">user@example.com</p>
+
+                    <!-- BADGES -->
+                    <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                        <span class="badge-verified">✓ Verified Account</span>
+                        <span class="badge-vip" id="profileRoleBadge">⭐️ VIP Foodie</span>
+                    </div>
+
+                    <!-- SHORT BIO -->
+                    <p class="small text-muted fst-italic px-2 mb-4" id="profileCardBio">
+                        "Food lover enjoying AI-crafted delicacies at AlHayat."
+                    </p>
+
+                    <!-- QUICK STATS / SHORTCUTS -->
+                    <div class="d-grid gap-2 border-top border-secondary pt-3">
+                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="openPhotoPickerModal()">
+                            📸 Update Photo / Pick Avatar
+                        </button>
+                        <a href="myorders.html" class="btn btn-outline-light btn-sm">
+                            📦 View My Orders
+                        </a>
+                        <!-- LOGOUT BUTTON INSIDE PROFILE -->
+                        <button type="button" class="btn btn-logout btn-sm mt-2" onclick="logoutProfile()">
+                            🚪 Log Out of Account
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- QUICK ADDRESS SUMMARY CARD -->
+                <div class="profile-card">
+                    <h6 class="text-warning fw-bold mb-3 d-flex align-items-center justify-content-between">
+                        <span>📍 Delivery Quick View</span>
+                        <span class="badge bg-warning text-dark" id="quickAddressType">Home</span>
+                    </h6>
+                    <p class="small text-light mb-1" id="quickAddressSummary">
+                        No address saved yet. Fill in your delivery address on the right to speed up checkout!
+                    </p>
+                    <small class="text-muted d-block mt-2" id="quickPhoneSummary">📞 Phone: Not set</small>
+                </div>
+
+            </div>
+
+            <!-- =====================================================
+                 RIGHT COLUMN: EDITABLE PROFILE DETAILS
+            ===================================================== -->
+            <div class="col-lg-8 col-md-7">
+
+                <form id="profileForm" onsubmit="event.preventDefault(); saveUserProfile();">
+
+                    <!-- 1. PERSONAL INFORMATION -->
+                    <div class="profile-card">
+                        <h5 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span>👤</span> Personal Information
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileName">Full Name *</label>
+                                <input type="text" id="profileName" class="form-control" placeholder="e.g. Mohd Sahil" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileEmail">Email Address (Registered)</label>
+                                <input type="email" id="profileEmail" class="form-control" readonly disabled style="opacity: 0.75; cursor: not-allowed;">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profilePhone">Phone Number *</label>
+                                <input type="tel" id="profilePhone" class="form-control" placeholder="+91 98765 43210" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileBirthday">Birthday / Anniversary</label>
+                                <input type="date" id="profileBirthday" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="profileBio">Bio / Foodie Tagline</label>
+                                <input type="text" id="profileBio" class="form-control" placeholder="e.g. Biryani & spicy curry enthusiast 🍲">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. DELIVERY ADDRESS -->
+                    <div class="profile-card" id="addressSection">
+                        <h5 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span>📍</span> Delivery Address Details
+                        </h5>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Address Type</label>
+                            <div class="pill-group" id="addressTypeGroup">
+                                <button type="button" class="pill-btn active" data-type="Home" onclick="selectAddressType('Home')">🏠 Home</button>
+                                <button type="button" class="pill-btn" data-type="Work" onclick="selectAddressType('Work')">💼 Work / Office</button>
+                                <button type="button" class="pill-btn" data-type="Other" onclick="selectAddressType('Other')">📍 Other</button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label" for="profileStreet">House / Flat No., Building, Street *</label>
+                                <input type="text" id="profileStreet" class="form-control" placeholder="e.g. Flat 402, Royal Residency, Park Street">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileLandmark">Landmark</label>
+                                <input type="text" id="profileLandmark" class="form-control" placeholder="e.g. Near City Metro / Opposite Mall">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileCity">City</label>
+                                <input type="text" id="profileCity" class="form-control" placeholder="e.g. Delhi / Lucknow / Mumbai">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profileState">State</label>
+                                <input type="text" id="profileState" class="form-control" placeholder="e.g. Uttar Pradesh">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profilePincode">Pincode / Postal Code</label>
+                                <input type="text" id="profilePincode" class="form-control" placeholder="e.g. 110001">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="profileDeliveryNotes">Delivery Instructions (Optional)</label>
+                                <input type="text" id="profileDeliveryNotes" class="form-control" placeholder="e.g. Ring bell twice, leave at reception, or call on arrival">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. FOOD & DINING PREFERENCES -->
+                    <div class="profile-card" id="preferenceSection">
+                        <h5 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span>🍽️</span> Food & Taste Preferences
+                        </h5>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Dietary Preference</label>
+                            <div class="pill-group" id="dietaryGroup">
+                                <button type="button" class="pill-btn active" data-diet="All / Non-Veg" onclick="selectDiet('All / Non-Veg')">🍗 Non-Veg</button>
+                                <button type="button" class="pill-btn" data-diet="Vegetarian" onclick="selectDiet('Vegetarian')">🌱 Vegetarian</button>
+                                <button type="button" class="pill-btn" data-diet="Halal" onclick="selectDiet('Halal')">🥩 Halal</button>
+                                <button type="button" class="pill-btn" data-diet="Vegan" onclick="selectDiet('Vegan')">🥗 Vegan</button>
+                                <button type="button" class="pill-btn" data-diet="Eggetarian" onclick="selectDiet('Eggetarian')">🥚 Eggetarian</button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label" for="profileFavDish">Favorite Dishes / Must-Haves</label>
+                                <input type="text" id="profileFavDish" class="form-control" placeholder="e.g. Chicken Dum Biryani, Paneer Tikka, Garlic Naan, Cold Coffee">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS ("uper & neeche dono jagah options") -->
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="submit" id="saveProfileBtn" class="btn btn-gold btn-lg">
+                                💾 Save Profile Changes
+                            </button>
+                            <a href="index.html" class="btn btn-outline-light btn-lg">
+                                🏠 Back to Menu
+                            </a>
+                        </div>
+                        <button type="button" onclick="logoutProfile()" class="btn btn-logout btn-lg">
+                            🚪 Logout
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         PHOTO UPLOAD / AVATAR PICKER MODAL
+    ===================================================== -->
+    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border border-warning" style="border-radius: 18px;">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-warning fw-bold" id="avatarModalLabel">
+                        📸 Choose Profile Picture
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- UPLOAD FROM FILE -->
+                    <div class="mb-4 text-center">
+                        <p class="small text-secondary mb-2">Upload a photo from your phone or computer</p>
+                        <input type="file" id="avatarFileInput" accept="image/*" class="d-none" onchange="handleAvatarFileSelect(event)">
+                        <button type="button" class="btn btn-warning fw-bold px-4" onclick="document.getElementById('avatarFileInput').click()">
+                            📁 Select Image from Device
+                        </button>
+                    </div>
+
+                    <div class="text-center my-3 text-secondary position-relative">
+                        <hr class="border-secondary">
+                        <span class="bg-dark px-2 position-absolute top-50 start-50 translate-middle small">OR PICK A FOOD AVATAR</span>
+                    </div>
+
+                    <!-- PRESET FOOD AVATARS -->
+                    <div class="preset-avatar-grid mt-3">
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('👨‍🍳')">
+                            👨‍🍳
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Chef</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('👑')">
+                            👑
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Royal VIP</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('🍕')">
+                            🍕
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Pizza</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('🍔')">
+                            🍔
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Burger</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('☕️')">
+                            ☕️
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Coffee</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('🥗')">
+                            🥗
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Healthy</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('🍗')">
+                            🍗
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Biryani</div>
+                        </div>
+                        <div class="preset-avatar-item" onclick="choosePresetAvatar('🍰')">
+                            🍰
+                            <div style="font-size: 11px; color:#aaa; margin-top: 4px;">Dessert</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top border-secondary text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAvatar()">
+                            🗑️ Reset to Default Avatar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="profileToast">
+        <span style="font-size: 20px;">✅</span>
+        <span id="toastMsg">Profile updated successfully!</span>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="config.js"></script>
+    <script src="profile.js"></script>
+
+</body>
+
+</html>

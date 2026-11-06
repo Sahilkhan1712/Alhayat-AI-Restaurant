@@ -7,56 +7,165 @@
     <title>Login | AlHayat AI Restaurant</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body.auth-page {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #242424 0%, #0d0d0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(26, 26, 26, 0.95);
+            border: 1px solid rgba(255, 193, 7, 0.35);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 193, 7, 0.15);
+            padding: 35px 28px;
+            color: #fff;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #ffc107;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-card .form-control {
+            background: #252525;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-card .form-control:focus {
+            background: #2b2b2b;
+            border-color: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            color: #fff;
+        }
+
+        .auth-card .form-control::placeholder {
+            color: #888;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            border: none;
+            color: #111;
+            font-weight: 700;
+            padding: 13px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+            color: #000;
+        }
+
+        .btn-google {
+            background: #fff;
+            color: #222;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 11px;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .btn-google:hover {
+            background: #f1f1f1;
+            transform: translateY(-1px);
+        }
+
+        .auth-footer a {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .home-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 15px;
+            transition: color 0.2s;
+        }
+
+        .home-link:hover {
+            color: #ffc107;
+        }
+    </style>
 </head>
 
-<body class="bg-dark">
+<body class="auth-page">
 
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-
-        <div class="card p-4 shadow-lg" style="width:400px; border-radius:15px;">
-
-            <h2 class="text-center text-warning mb-4">
-                AlHayat AI
-            </h2>
-
-            <h4 class="text-center mb-4">
-                Login
-            </h4>
-
-            <input type="email" id="email" class="form-control mb-3" placeholder="Email">
-
-            <input type="password" id="password" class="form-control mb-3" placeholder="Password">
-
-            <button class="btn btn-warning w-100" onclick="login()">
-
-                Login
-
-            </button>
-
-            <button type="button"
-                class="btn btn-light w-100 fw-bold d-flex align-items-center justify-content-center gap-2"
-                onclick="loginWithGoogle()">
-
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20"
-                    height="20">
-
-                Continue with Google
-
-            </button>
-
-            <p class="text-center mt-3">
-
-                Don't have an account?
-
-                <a href="signup.html">
-                    Signup
-                </a>
-
-            </p>
-
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <span class="brand-badge">✨ AI Smart Dining</span>
+            <h2 class="text-warning fw-bold mt-2 mb-1">AlHayat AI</h2>
+            <p class="text-secondary small">Login to access your orders, saved addresses & profile</p>
         </div>
 
+        <form onsubmit="event.preventDefault(); login();">
+            <div class="mb-3">
+                <label class="form-label small text-secondary">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small text-secondary">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn btn-login w-100 mb-3">
+                🔐 Login to Account
+            </button>
+        </form>
+
+        <div class="text-center my-3 text-secondary position-relative">
+            <hr class="border-secondary">
+            <span class="bg-dark px-2 position-absolute top-50 start-50 translate-middle small">OR</span>
+        </div>
+
+        <button type="button" class="btn btn-google w-100 d-flex align-items-center justify-content-center gap-2" onclick="loginWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" height="20">
+            Continue with Google
+        </button>
+
+        <div class="auth-footer text-center mt-4 pt-3 border-top border-secondary">
+            <p class="mb-2 text-secondary small">Don't have an account yet?</p>
+            <a href="signup.html" class="btn btn-outline-warning w-100 fw-bold py-2 mb-2">
+                📝 Register / Create New Account
+            </a>
+            <a href="index.html" class="home-link">← Back to Restaurant Menu</a>
+        </div>
     </div>
 
     <script src="config.js"></script>
